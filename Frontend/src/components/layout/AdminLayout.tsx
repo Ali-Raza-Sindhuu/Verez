@@ -1,76 +1,45 @@
-import { useState, type ReactNode } from "react";
-import { Sidebar, type SidebarNavItem } from "./Sidebar";
-import { Header } from "./Header";
-import { MobileNavigation } from "./MobileNavigation";
-
-export interface AdminLayoutProps {
-  navItems: SidebarNavItem[];
-  onNavigate?: (href: string) => void;
-  pageTitle?: string;
-  headerActions?: ReactNode;
-  sidebarHeader?: ReactNode;
-  sidebarFooter?: ReactNode;
-  children: ReactNode;
-}
+import { Outlet } from "react-router-dom";
+import { Sidebar } from "./sidebar";
+import { Header } from "./header";
 
 /**
  * AdminLayout
  *
- * Sample composition showing how Sidebar, Header, and MobileNavigation fit
- * together. This is a reference for how admin/manager/vendor dashboard
- * layouts should be assembled — not a complete dashboard. Sidebar is
- * hidden below the `lg` breakpoint and replaced by Header's menu button
- * opening MobileNavigation.
+ * Top-level shell for every authenticated admin route. Renders the
+ * fixed-height Sidebar on the left and a column on the right made up of
+ * the sticky Header plus the routed page content (via React Router's
+ * <Outlet />).
  *
- * Example:
- *   <AdminLayout
- *     pageTitle="Products"
- *     navItems={navItems}
- *     onNavigate={(href) => navigate(href)}
- *   >
- *     <ProductsPage />
- *   </AdminLayout>
+ * Sidebar manages its own collapsed/expanded state internally, so this
+ * layout doesn't need to lift or pass that state down — it just stacks
+ * the two pieces side by side. Header no longer owns a sidebar-toggle
+ * button (removed per the "other plans" for a separate sidebar
+ * control), so nothing needs to be wired between them here yet.
+ *
+ * Page content should NOT re-implement scrolling/height — this
+ * component owns the outer scroll container so Header can stay sticky
+ * without the whole viewport scrolling underneath it.
+ *
+ * Example (in your router config):
+ *   {
+ *     element: <AdminLayout />,
+ *     children: [
+ *       { path: "/admin", element: <DashboardPage /> },
+ *       { path: "/products", element: <ProductsPage /> },
+ *     ],
+ *   }
  */
-export function AdminLayout({
-  navItems,
-  onNavigate,
-  pageTitle,
-  headerActions,
-  sidebarHeader,
-  sidebarFooter,
-  children,
-}: AdminLayoutProps) {
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
-
+export function AdminLayout() {
   return (
     <div className="flex h-screen bg-slate-50">
-      <div className="hidden lg:block">
-        <Sidebar
-          navItems={navItems}
-          onNavigate={onNavigate}
-          header={sidebarHeader}
-          footer={sidebarFooter}
-        />
-      </div>
+      <Sidebar />
 
-      <MobileNavigation
-        open={mobileNavOpen}
-        onClose={() => setMobileNavOpen(false)}
-        navItems={navItems}
-        onNavigate={(href) => {
-          onNavigate?.(href);
-          setMobileNavOpen(false);
-        }}
-      />
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <Header />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Header
-          title={pageTitle}
-          onMenuClick={() => setMobileNavOpen(true)}
-          actions={headerActions}
-        />
-
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

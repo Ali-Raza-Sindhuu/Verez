@@ -1,6 +1,6 @@
-import { ProductCard, type ProductCardProps } from "./ProductCard";
-import { SkeletonProduct } from "../feedback/Skeleton";
-import { EmptyState } from "../feedback/EmptyState";
+import { ProductCard, type ProductCardProps } from "./productCard";
+import { SkeletonProduct } from "../feedback/skeleton";
+import { EmptyState } from "../feedback/emptyState";
 import { cn } from "../../utils/cn";
 
 export interface ProductGridItem extends ProductCardProps {

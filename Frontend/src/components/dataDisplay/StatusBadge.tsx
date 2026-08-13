@@ -1,4 +1,4 @@
-import { Badge, type BadgeVariant } from "./Badge";
+import { Badge, type BadgeVariant } from "./badge";
 
 export type OrderStatus =
   | "pending"

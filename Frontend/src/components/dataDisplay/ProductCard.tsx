@@ -1,6 +1,6 @@
 import { ShoppingCart, Star } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Badge } from "../dataDisplay/Badge";
+import { Button } from "../ui/button";
+import { Badge } from "./badge";
 import { cn } from "../../utils/cn";
 
 export type StockStatus = "inStock" | "lowStock" | "outOfStock";

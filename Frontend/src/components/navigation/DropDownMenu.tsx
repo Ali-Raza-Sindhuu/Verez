@@ -121,33 +121,31 @@ export function DropdownMenu({
         >
           {items.map((item, index) => (
             <button
-  key={item.label}
-  ref={(el) => {
-    itemRefs.current[index] = el;
-  }}
-  type="button"
-  role="menuitem"
-  disabled={item.disabled}
-  onClick={() => {
-    item.onClick();
-    setOpen(false);
-  }}
-  className={cn(
-    "flex w-full items-center gap-2 px-3 py-2 text-left text-sm",
-    "focus-visible:outline-none",
-    "disabled:cursor-not-allowed disabled:opacity-40",
-    item.danger
-      ? "text-red-600 hover:bg-red-50 focus-visible:bg-red-50"
-      : "text-slate-700 hover:bg-slate-100 focus-visible:bg-slate-100"
-  )}
->
-  {item.icon && (
-    <span className="shrink-0" aria-hidden="true">
-      {item.icon}
-    </span>
-  )}
-  {item.label}
-</button>
+              key={item.label}
+              ref={(el) => (itemRefs.current[index] = el)}
+              type="button"
+              role="menuitem"
+              disabled={item.disabled}
+              onClick={() => {
+                item.onClick();
+                setOpen(false);
+              }}
+              className={cn(
+                "flex w-full items-center gap-2 px-3 py-2 text-left text-sm",
+                "focus-visible:outline-none",
+                "disabled:cursor-not-allowed disabled:opacity-40",
+                item.danger
+                  ? "text-red-600 hover:bg-red-50 focus-visible:bg-red-50"
+                  : "text-slate-700 hover:bg-slate-100 focus-visible:bg-slate-100"
+              )}
+            >
+              {item.icon && (
+                <span className="shrink-0" aria-hidden="true">
+                  {item.icon}
+                </span>
+              )}
+              {item.label}
+            </button>
           ))}
         </div>
       )}

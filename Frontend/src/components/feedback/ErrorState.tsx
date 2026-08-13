@@ -1,5 +1,5 @@
 import { AlertCircle } from "lucide-react";
-import { Button } from "../ui/Button";
+import { Button } from "../ui/button";
 import { cn } from "../../utils/cn";
 
 export interface ErrorStateProps {

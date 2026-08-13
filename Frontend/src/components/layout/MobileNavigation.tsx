@@ -1,4 +1,4 @@
-import { Drawer } from "../feedback/Drawer";
+import { Drawer } from "../feedback/drawer";
 import type { SidebarNavItem } from "./Sidebar";
 import { cn } from "../../utils/cn";
 

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { cn } from "../../utils/cn";
-import { SkeletonTable } from "../feedback/Skeleton";
-import { EmptyState } from "../feedback/EmptyState";
-import { Pagination } from "../navigation/Pagination";
+import { SkeletonTable } from "../feedback/skeleton";
+import { EmptyState } from "../feedback/emptyState";
+import { Pagination } from "../navigation/pagination";
 
 export interface DataTableColumn<T> {
   /** Unique key for this column, also used to read a default cell value from the row. */
