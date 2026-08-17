@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, ArrowLeft, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 
 // NOTE: form is UI-only for now — wire the onSubmit handler up to Clerk's
 // `useSignIn()` once auth is connected. Structure (fields, error state,
