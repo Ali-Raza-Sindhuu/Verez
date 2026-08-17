@@ -1,26 +1,32 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { AdminRouteLayout } from './routes/AdminRouteLayout'
-import { ProductsPage } from './pages/ProductsPage'
-import { HomePage } from './pages/HomePage'
-import { AdminDashboardPage } from './pages/AdminDashboardPage'
-import { NotFoundPage } from './pages/NotFoundPage'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "@/pages/Home";
+import Login from "@/pages/Login";
+import SignUp from "@/pages/SignUp";
+import DashboardLayout from "./layouts/DashboardLayout";
+import Orders from "./pages/Orders";
+import Dashboard from "./pages/Dashboard";
+import Products from "./pages/Products";
+import Customers from "./pages/Customers";
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 
-const App = () => {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
 
-        <Route path="/admin" element={<AdminRouteLayout />}>
-          <Route index element={<AdminDashboardPage />} />
-          <Route path="dashboard" element={<AdminDashboardPage />} />
-          <Route path="products" element={<ProductsPage />} />
-        </Route>
-
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/dashboard" element={<DashboardLayout />}>
+  <Route index element={<Dashboard />} />
+  <Route path="orders" element={<Orders />} />
+  <Route path="products" element={<Products />} />
+  <Route path="customers" element={<Customers />} />
+  <Route path="analytics" element={<Analytics />} />
+  <Route path="settings" element={<Settings />} />
+</Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
-
-export default App
