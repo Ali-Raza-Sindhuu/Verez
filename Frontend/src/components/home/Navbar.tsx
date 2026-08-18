@@ -1,95 +1,134 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Menu, X, ArrowUpRight } from "lucide-react";
 
-const links = [
-  { label: "Product", href: "#features" },
-  { label: "Workflow", href: "#growth" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Stories", href: "#testimonials" },
-];
+const NAV_LINKS = ["Features", "Solutions", "Resources", "Pricing"];
 
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+export function Navbar() {
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-ink/85 backdrop-blur-md border-b border-white/5" : "bg-transparent"
-      }`}
+    <motion.header
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="relative z-30 border-b border-black/[0.06] bg-white px-8 py-4"
     >
-      <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 h-20">
-        <Link to="/" className="flex items-center gap-2 font-display font-semibold text-lg tracking-tight">
-          <span className="w-8 h-8 rounded-md bg-teal flex items-center justify-center text-ink font-bold">
-            V
+      {/* 3-column grid keeps nav links visually centered regardless of side widths */}
+      <div className="mx-auto grid max-w-6xl grid-cols-2 items-center md:grid-cols-[1fr_auto_1fr]">
+        {/* logo */}
+        <Link to="/" className="flex items-center gap-2 justify-self-start">
+          <div className="grid grid-cols-2 gap-[3px]">
+            <span className="h-[6px] w-[6px] rounded-full bg-[#2FA8E8]" />
+            <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
+            <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
+            <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
+          </div>
+          <span className="text-[15px] font-semibold tracking-tight text-[#14151A]">
+            Vexez
           </span>
-          Vexez
         </Link>
 
-        <ul className="hidden md:flex items-center gap-9 text-sm text-slate-text">
-          {links.map((l) => (
-            <li key={l.label}>
-              <a href={l.href} className="hover:text-cream transition-colors">
-                {l.label}
-              </a>
-            </li>
+        {/* centered nav links */}
+        <nav className="hidden items-center gap-9 md:flex">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l}
+              to="#"
+              className="text-[14px] text-[#5B5D66] transition-colors hover:text-[#14151A]"
+            >
+              {l}
+            </Link>
           ))}
-        </ul>
+        </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/login" className="text-sm text-slate-text hover:text-cream transition-colors">
-            Log in
+        {/* actions */}
+        <div className="hidden items-center gap-5 justify-self-end md:flex">
+          <Link
+            to="/login"
+            className="text-[14px] text-[#5B5D66] transition-colors hover:text-[#14151A]"
+          >
+            Sign in
           </Link>
           <Link
-            to="/signUp"
-            className="group inline-flex items-center gap-1.5 bg-teal text-ink text-sm font-medium px-4 py-2.5 rounded-full hover:bg-teal-glow transition-colors"
+            to="#"
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            className="rounded-lg border border-black/10 bg-white px-4 py-[7px] text-[13.5px] font-medium text-[#14151A] shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-black/[0.02]"
           >
-            Get a demo
-            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            Get demo
           </Link>
         </div>
 
-        <button className="md:hidden" onClick={() => setOpen(!open)} aria-label="Toggle menu">
-          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </nav>
-
-      {open && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          className="md:hidden bg-ink border-b border-white/5 px-6 pb-6 flex flex-col gap-4"
+        {/* mobile toggle */}
+        <button
+          className="justify-self-end p-1 md:hidden"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Toggle menu"
         >
-          {links.map((l) => (
-            <a key={l.label} href={l.href} className="text-slate-text hover:text-cream" onClick={() => setOpen(false)}>
-              {l.label}
-            </a>
-          ))}
-          <Link
-            to="/login"
-            className="text-slate-text hover:text-cream"
-            onClick={() => setOpen(false)}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={open ? "close" : "open"}
+              initial={{ opacity: 0, rotate: -45 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 45 }}
+              transition={{ duration: 0.15 }}
+              className="block"
+            >
+              {open ? (
+                <X className="h-5 w-5 text-[#14151A]" />
+              ) : (
+                <Menu className="h-5 w-5 text-[#14151A]" />
+              )}
+            </motion.span>
+          </AnimatePresence>
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden md:hidden"
           >
-            Log in
-          </Link>
-          <Link
-            to="/signUp"
-            className="bg-teal text-ink text-center font-medium px-4 py-2.5 rounded-full"
-            onClick={() => setOpen(false)}
-          >
-            Get a demo
-          </Link>
-        </motion.div>
-      )}
-    </header>
+            <div className="flex flex-col gap-4 pb-2 pt-5">
+              {NAV_LINKS.map((l, i) => (
+                <motion.div
+                  key={l}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Link
+                    to="#"
+                    className="text-[14.5px] text-[#3A3C44] hover:text-[#14151A]"
+                  >
+                    {l}
+                  </Link>
+                </motion.div>
+              ))}
+              <div className="mt-1 flex items-center gap-4 border-t border-black/[0.06] pt-4">
+                <Link
+                  to="/login"
+                  className="text-[14px] text-[#3A3C44] hover:text-[#14151A]"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="#"
+                  className="rounded-lg border border-black/10 bg-white px-4 py-2 text-[13.5px] font-medium text-[#14151A] shadow-sm"
+                >
+                  Get demo
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }

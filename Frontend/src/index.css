@@ -1,1 +1,72 @@
 @import "tailwindcss";
+
+/* Raw brand palette — same physical colors referenced by both modes */
+@theme {
+  --color-ink: #14151A;
+  --color-porcelain: #F6F4EF;
+  --color-porcelain-alt-1: #FBFAF7;
+  --color-porcelain-alt-2: #F1EEE6;
+
+  --color-wire-blue: #3D6DF2;
+  --color-wire-blue-dark: #5C82F5;   /* AA-adjusted, dark-mode use only */
+
+  --color-signal-amber: #E8A33D;      /* passes both modes unchanged */
+
+  --color-ledger-green: #3E7C59;      /* light-mode / decorative-only in dark */
+  --color-ledger-green-dark: #3E9C6F; /* AA-adjusted, dark-mode primary */
+
+  --color-alert-red: #E8552F;         /* passes both modes unchanged */
+  --color-alert-red-alt: #E24A3A;     /* borderline in dark — icons/large UI only */
+
+  --color-surface-dark: #1B1C22;
+  --color-surface-alt-dark: #212229;
+  --color-surface-raised-dark: #2A2B33;
+}
+
+/* Semantic tokens — light mode (default) */
+:root {
+  --color-bg: var(--color-porcelain);
+  --color-surface: var(--color-porcelain-alt-1);
+  --color-surface-alt: var(--color-porcelain-alt-2);
+
+  --color-text-primary: rgb(0 0 0 / 0.72);
+  --color-text-secondary: rgb(0 0 0 / 0.55);
+  --color-text-tertiary: rgb(0 0 0 / 0.40);
+  --color-text-faint: rgb(0 0 0 / 0.28);
+
+  --color-accent-primary: var(--color-wire-blue);
+  --color-accent-secondary: var(--color-signal-amber);
+  --color-accent-success: var(--color-ledger-green);
+  --color-accent-danger: var(--color-alert-red);
+
+  --color-border-hairline: rgb(0 0 0 / 0.06);
+  --color-border-strong: rgb(0 0 0 / 0.10);
+
+  --shadow-resting: 0 1px 2px rgb(0 0 0 / 0.03);
+  --shadow-lifted: 0 10px 24px rgb(0 0 0 / 0.08);
+  --shadow-cta-glow: 0 10px 24px rgb(61 109 242 / 0.3);
+}
+
+/* Semantic tokens — dark mode */
+.dark {
+  --color-bg: var(--color-ink);
+  --color-surface: var(--color-surface-dark);
+  --color-surface-alt: var(--color-surface-alt-dark);
+
+  --color-text-primary: rgb(246 244 239 / 0.92);
+  --color-text-secondary: rgb(246 244 239 / 0.64);
+  --color-text-tertiary: rgb(246 244 239 / 0.40);
+  --color-text-faint: rgb(246 244 239 / 0.22);
+
+  --color-accent-primary: var(--color-wire-blue-dark);
+  --color-accent-secondary: var(--color-signal-amber);
+  --color-accent-success: var(--color-ledger-green-dark);
+  --color-accent-danger: var(--color-alert-red);
+
+  --color-border-hairline: rgb(255 255 255 / 0.08);
+  --color-border-strong: rgb(255 255 255 / 0.14);
+
+  --shadow-resting: 0 1px 2px rgb(0 0 0 / 0.32);
+  --shadow-lifted: 0 16px 40px rgb(0 0 0 / 0.55);
+  --shadow-cta-glow: 0 0 0 1px rgb(92 130 245 / 0.4), 0 10px 30px rgb(92 130 245 / 0.35);
+}

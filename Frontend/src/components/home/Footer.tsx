@@ -1,93 +1,261 @@
-const socialIcons = [
-  {
-    label: "Instagram",
-    path: "M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 5.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Zm0 1.6a2.9 2.9 0 1 1 0 5.8 2.9 2.9 0 0 1 0-5.8ZM17.6 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z",
-  },
-  {
-    label: "Facebook",
-    path: "M13.5 21v-7.2h2.4l.4-2.8h-2.8V9.2c0-.8.2-1.4 1.4-1.4h1.5V5.3c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.1H8v2.8h2.5V21h3Z",
-  },
-  {
-    label: "LinkedIn",
-    path: "M6.9 8.4H3.7V20h3.2V8.4ZM5.3 3.5a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8ZM20.3 20h-3.2v-6c0-1.4 0-3.2-2-3.2s-2.3 1.6-2.3 3.1V20H9.6V8.4h3.1v1.6h.05c.4-.8 1.5-1.6 3.1-1.6 3.3 0 3.9 2.2 3.9 5V20Z",
-  },
-];
+import { motion } from "framer-motion";
+import {
+  MessageCircle,
+  Flag,
+  CalendarDays,
+  Lightbulb,
+  Check,
+  Hourglass,
+  Timer,
+  ChevronsRight,
+  Clock3,
+} from "lucide-react";
 
-const columns = [
-  { title: "Menu", links: ["Home", "Pricing plans", "About us", "Contact us"] },
-  { title: "Company", links: ["Style guide", "Password protect", "Testimonial", "404 page"] },
-  { title: "Social", links: ["Instagram", "Facebook", "LinkedIn"] },
-];
+const FOOTER_LINKS_LEFT = ["About Us", "Contact", "What's New", "Careers"];
+const FOOTER_LINKS_RIGHT = ["Product", "Solutions", "Integrations", "Price"];
 
-export default function Footer() {
+// ---------- generic floating icon tile ----------
+
+function FloatTile({
+  icon: Icon,
+  bg,
+  fg,
+  rotate,
+  delay,
+  className,
+  size = "h-14 w-14",
+  iconSize = "h-5 w-5",
+}: {
+  icon: React.ElementType;
+  bg: string;
+  fg: string;
+  rotate: number;
+  delay: number;
+  className: string;
+  size?: string;
+  iconSize?: string;
+}) {
   return (
-    <footer className="border-t border-white/5 pt-20 pb-10 px-6">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8 pb-14 border-b border-white/5">
-        <div>
-          <h3 className="font-display font-semibold text-2xl">Contact us now</h3>
-          <p className="text-slate-text text-sm mt-1">Simplify your customer relationships, maximize growth.</p>
-        </div>
-        <form
-          onSubmit={(e) => e.preventDefault()}
-          className="flex items-center gap-2 bg-card border border-white/10 rounded-full p-1.5 pl-5 w-full md:w-auto"
+    <motion.div
+      initial={{ opacity: 0, y: 18, rotate: rotate * 1.6 }}
+      whileInView={{ opacity: 1, y: 0, rotate }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={`absolute ${className}`}
+    >
+      <motion.div
+        animate={{ y: [0, -7, 0] }}
+        transition={{ duration: 4 + delay, repeat: Infinity, ease: "easeInOut", delay }}
+        className={`flex ${size} items-center justify-center rounded-2xl shadow-[0_10px_24px_rgba(0,0,0,0.08)]`}
+        style={{ background: bg }}
+      >
+        <Icon className={iconSize} style={{ color: fg }} strokeWidth={2} />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ---------- the "20" numeral tile (unique, not an icon) ----------
+
+function NumeralTile({ rotate, delay, className }: { rotate: number; delay: number; className: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18, rotate: rotate * 1.6 }}
+      whileInView={{ opacity: 1, y: 0, rotate }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={`absolute ${className}`}
+    >
+      <motion.div
+        animate={{ y: [0, -7, 0] }}
+        transition={{ duration: 4 + delay, repeat: Infinity, ease: "easeInOut", delay }}
+        className="flex h-14 w-16 items-center justify-center rounded-2xl bg-white shadow-[0_10px_24px_rgba(0,0,0,0.08)]"
+      >
+        <span className="text-[22px] font-semibold text-[#14151A]">20</span>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ---------- clock-with-check tile (dark, bespoke face) ----------
+
+function ClockCheckTile({ rotate, delay, className }: { rotate: number; delay: number; className: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18, rotate: rotate * 1.6 }}
+      whileInView={{ opacity: 1, y: 0, rotate }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={`absolute ${className}`}
+    >
+      <motion.div
+        animate={{ y: [0, -7, 0] }}
+        transition={{ duration: 4 + delay, repeat: Infinity, ease: "easeInOut", delay }}
+        className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#14151A] shadow-[0_10px_24px_rgba(0,0,0,0.15)]"
+      >
+        <Clock3 className="h-5 w-5 text-white/90" strokeWidth={2} />
+        <span className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#3E9C6F] ring-2 ring-[#14151A]">
+          <Check className="h-3 w-3 text-white" strokeWidth={3.5} />
+        </span>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="mx-6 mb-6 overflow-hidden rounded-[28px] border border-black/[0.06] bg-[#F1EEE6]">
+      <div className="relative px-8 pt-12 sm:px-14">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col justify-between gap-8 sm:flex-row sm:items-start"
         >
-          <input
-            type="email"
-            placeholder="Enter your email address"
-            className="bg-transparent text-sm placeholder:text-slate-text/60 focus:outline-none flex-1 min-w-0"
-          />
-          <button
-            type="submit"
-            className="bg-teal text-ink text-sm font-medium px-5 py-2 rounded-full whitespace-nowrap hover:bg-teal-glow transition-colors"
-          >
-            Subscribe
-          </button>
-        </form>
-      </div>
-
-      <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-4 gap-10 pt-14">
-        <div>
-          <a href="#" className="flex items-center gap-2 font-display font-semibold text-lg">
-            <span className="w-8 h-8 rounded-md bg-teal flex items-center justify-center text-ink font-bold">
-              V
-            </span>
-            Vexez
-          </a>
-          <p className="text-sm text-slate-text mt-4 leading-relaxed">
-            vexez@gmail.com
-            <br />
-            (704) 555-0127
-          </p>
-          <div className="flex gap-3 mt-5 text-slate-text">
-            {socialIcons.map((icon) => (
-              <a key={icon.label} href="#" aria-label={icon.label} className="hover:text-teal transition-colors">
-                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-                  <path d={icon.path} />
-                </svg>
-              </a>
-            ))}
+          <div>
+            <div className="mb-4 flex items-center gap-2">
+              <div className="grid grid-cols-2 gap-[3px]">
+                <span className="h-[6px] w-[6px] rounded-full bg-[#2FA8E8]" />
+                <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
+                <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
+                <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
+              </div>
+              <span className="text-[15px] font-semibold tracking-tight text-[#14151A]">
+                Vexez
+              </span>
+            </div>
+            <h3 className="max-w-xs text-[26px] font-semibold leading-[1.2] tracking-tight text-[#14151A] sm:text-[30px]">
+              Stay organized and boost your productivity
+            </h3>
           </div>
-        </div>
 
-        {columns.map((c) => (
-          <div key={c.title}>
-            <p className="text-sm font-medium mb-4">{c.title}</p>
+          <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-[13px]">
             <ul className="space-y-2.5">
-              {c.links.map((l) => (
+              {FOOTER_LINKS_LEFT.map((l) => (
                 <li key={l}>
-                  <a href="#" className="text-sm text-slate-text hover:text-cream transition-colors">
+                  <a
+                    href="#"
+                    className="flex items-center gap-1.5 text-black/55 transition hover:text-black/90"
+                  >
+                    <span className="text-black/30">→</span>
+                    {l}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <ul className="space-y-2.5">
+              {FOOTER_LINKS_RIGHT.map((l) => (
+                <li key={l}>
+                  <a
+                    href="#"
+                    className="flex items-center gap-1.5 text-black/55 transition hover:text-black/90"
+                  >
+                    <span className="text-black/30">→</span>
                     {l}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
-        ))}
-      </div>
+        </motion.div>
 
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between gap-2 mt-14 pt-6 border-t border-white/5 text-xs text-slate-text/60">
-        <span>© {new Date().getFullYear()} Vexez. All rights reserved.</span>
-        <span>Privacy policy · Terms & conditions</span>
+        {/* floating icon field */}
+        <div className="relative mt-14 h-[240px] sm:h-[260px]">
+          <div
+            className="absolute inset-0 opacity-70"
+            style={{
+              backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)",
+              backgroundSize: "16px 16px",
+              maskImage: "linear-gradient(to bottom, black 55%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, black 55%, transparent 100%)",
+            }}
+          />
+
+          {/* upper row */}
+          <NumeralTile rotate={-8} delay={0} className="left-[15%] top-[6%]" />
+          <FloatTile
+            icon={Flag}
+            bg="#FFFFFF"
+            fg="#3D6DF2"
+            rotate={-5}
+            delay={0.1}
+            className="left-[38%] top-[14%]"
+          />
+          <FloatTile
+            icon={CalendarDays}
+            bg="#FFFFFF"
+            fg="#14151A"
+            rotate={4}
+            delay={0.18}
+            className="left-[57%] top-[10%]"
+          />
+          <FloatTile
+            icon={Lightbulb}
+            bg="#E8A33D"
+            fg="#FFFFFF"
+            rotate={6}
+            delay={0.26}
+            className="left-[76%] top-[16%]"
+          />
+
+          {/* lower row */}
+          <FloatTile
+            icon={MessageCircle}
+            bg="#FFFFFF"
+            fg="#14151A"
+            rotate={-7}
+            delay={0.06}
+            className="left-[1%] top-[42%]"
+            size="h-12 w-12"
+            iconSize="h-4 w-4"
+          />
+          <FloatTile
+            icon={Check}
+            bg="#3D6DF2"
+            fg="#FFFFFF"
+            rotate={-4}
+            delay={0.32}
+            className="left-[16%] top-[70%]"
+          />
+          <ClockCheckTile rotate={4} delay={0.14} className="left-[33%] top-[56%]" />
+          <FloatTile
+            icon={Hourglass}
+            bg="#FFFFFF"
+            fg="#14151A"
+            rotate={-5}
+            delay={0.4}
+            className="left-[51%] top-[74%]"
+          />
+          <FloatTile
+            icon={Timer}
+            bg="#FFFFFF"
+            fg="#E8552F"
+            rotate={5}
+            delay={0.36}
+            className="left-[67%] top-[62%]"
+          />
+          <FloatTile
+            icon={ChevronsRight}
+            bg="#FFFFFF"
+            fg="#3D6DF2"
+            rotate={-3}
+            delay={0.44}
+            className="left-[83%] top-[68%]"
+          />
+        </div>
+
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-black/[0.07] py-6 text-[11.5px] text-black/40 sm:flex-row">
+          <span>© 2026. All rights reserved.</span>
+          <div className="flex gap-5">
+            <a href="#" className="hover:text-black/70">
+              Privacy Policy
+            </a>
+            <a href="#" className="hover:text-black/70">
+              Terms of Service
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );
