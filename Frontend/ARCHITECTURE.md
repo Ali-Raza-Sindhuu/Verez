@@ -1,273 +1,89 @@
-# Vexez — Architecture & Build Plan
+# Vexez — Handoff / Continuation Prompt
 
-This document is the source of truth for how Vexez goes from a marketing
-landing page to a working CRM / inventory management product. Read this
-before adding a feature — it tells you where it belongs and why.
+Paste this into a new Claude conversation to continue exactly where this one left off.
 
 ---
 
-## 1. What Vexez actually is
+I'm building Vexez — a student academic + productivity SaaS for university students. This is a **pivot**: Vexez was originally scoped as a CRM/e-commerce inventory platform, then briefly as a general CRM, and has now been **fully repositioned** as a student productivity product. All CRM concepts (Leads, Deals, Pipeline, Customers, Quotes, Orders, Companies) are discontinued and removed — do not reference or reintroduce them.
 
-Vexez is two connected things:
+## Stack
+React + TypeScript + Tailwind CSS + shadcn (Base UI / Nova preset) + react-router-dom + framer-motion + axios + lucide-react. gsap only if a complex scroll/timeline sequence genuinely needs it.
 
-1. **Marketing site** (done) — the public `Home.tsx` page: hero, features,
-   pricing, testimonials, FAQ. Its only job is to convert a visitor into a
-   signup.
-2. **Product** (next) — the authenticated CRM/inventory dashboard a
-   customer lands in after signup: orders, products, profit tracking,
-   customers, team management, billing.
+Backend (planned, not yet built): Node.js + Express, Socket.io (real-time), Clerk (auth), Prisma (ORM), PostgreSQL (local dev, Neon for production), Redis (cache/queues via BullMQ), Stripe (subscription billing), Resend + React Email for transactional email (Nodemailer kept only as a swappable SMTP fallback behind one `sendEmail()` function).
 
-These are **two separate apps that share a design system**, not one app
-with a login wall bolted on. The marketing site stays fast, static-ish,
-and SEO-friendly. The dashboard is a heavier, auth-gated, real-time SPA.
-Splitting them means the marketing bundle never carries dashboard weight,
-and the dashboard never has to worry about SEO or public caching.
+shadcn note: using Base UI (not classic Radix) with the Nova preset. Components import from `"@base-ui-components/react/..."` (NOT `"@base-ui/react/..."` — wrong package, breaks resolution). Custom CSS variable tokens (`--primary`, `--input`, `--foreground`, `--muted-foreground`, `--destructive`, `--ring`, etc.) are mapped onto the teal/ink palette in `index.css` + `tailwind.config.js`.
 
----
+## Design language (don't drift from this)
+Dark theme: ink background (#0A1210), teal accent (#1EC2BC / glow #5CF2E8), clay accent (#E7714A) used sparingly, cream text (#F6F4EE). Space Grotesk for display/headings, Inter for body, JetBrains Mono for small mono/eyebrow labels. Rounded-full buttons/pills, rounded-2xl cards, border-white/8 or /10 for card borders. Motion via framer-motion — fade+slide-up on scroll reveal, staggered delays, nothing gratuitous.
 
-## 2. Two ways to structure this — and which one we're using
-
-**Option A — Monorepo, two apps (chosen).**
-```
-vexez/
-  apps/
-    web/          <- marketing site (current Home.tsx work)
-    dashboard/    <- CRM app (new)
-  packages/
-    ui/           <- shared shadcn components, design tokens
-    config/       <- shared eslint/tailwind/tsconfig
-  server/         <- Express API
-```
-Pros: one repo, one PR history, shared UI kit, independent deploys.
-Cons: needs a workspace tool (npm workspaces / Turborepo).
-
-**Option B — Single app, `/dashboard` as a route inside the existing
-Vite app**, gated by an auth check.
-Pros: zero extra tooling, fastest to start.
-Cons: marketing and dashboard bundles ship together forever; harder to
-give the dashboard its own deploy cadence, caching rules, or eventually
-a different framework (e.g. Next.js for the dashboard if SSR data-heavy
-pages are needed later).
-
-**Decision: Option A**, using **npm workspaces** (no need for Turborepo
-yet — add it later only if build times actually hurt). This is the
-standard shape for a SaaS with a public site + authenticated product,
-and it's what lets us swap Clerk, add Socket.io, and scale the API
-independently of the landing page.
-
----
-
-## 3. Full tech stack and why each piece was picked
-
-| Layer | Choice | Why |
-|---|---|---|
-| Marketing frontend | React + TS + Tailwind + shadcn + Vite | Already built. Fast, static-hostable. |
-| Dashboard frontend | React + TS + Tailwind + shadcn + Vite | Same design language, SPA is fine since it's behind auth (no SEO need). |
-| Routing | react-router-dom | Already in use; nested routes fit a dashboard shell (`/dashboard/orders`, `/dashboard/products`, ...). |
-| Animation | framer-motion (+ GSAP only for complex scroll/timeline sequences if ever needed) | framer-motion covers 95% of dashboard micro-interactions; don't add GSAP until there's a concrete need. |
-| API server | Node.js + Express | Matches your existing POS/inventory backend conventions (RBAC middleware, permission_code system). |
-| ORM / DB access | Prisma | Type-safe queries, migrations, and a schema file that doubles as documentation of the data model. |
-| Database (dev) | PostgreSQL, local | Matches production engine exactly — no SQLite drift. |
-| Database (prod) | Neon (serverless Postgres) | Branching per PR/preview environment, scales to zero, works well with serverless/edge deploys. |
-| Cache / queues / pub-sub | Redis | Session/rate-limit storage, Socket.io adapter for multi-instance scaling, BullMQ job queues (email sending, report generation). |
-| Real-time | Socket.io | Live order status, live dashboard numbers, notifications — matches the "updates live, always" promise on the marketing page. |
-| Auth | Clerk | Handles signup/login/org (multi-tenant) out of the box, issues JWTs Express can verify, saves building password reset / MFA / session management from scratch. |
-| Payments | Stripe | Subscription billing for the pricing tiers (Starter/Standard/Enterprise), usage metering later if needed. |
-| Email | **Resend** (primary), Nodemailer kept as an SMTP fallback | See §4. |
-| File/image storage | (to decide when needed — Cloudflare R2 or S3) | Not needed yet; product photos will need it eventually. |
-| Deployment | Vercel (web + dashboard), Railway/Render (Express API + Redis), Neon (DB) | Standard, low-ops split; Express can move to a container later if it outgrows PaaS. |
-
----
-
-## 4. Email: Resend vs Nodemailer — decision
-
-**Use Resend as the default.** Reasons:
-- It's an actual email API (like Stripe is to payments) — you get
-  delivery/open tracking, retries, and domain reputation handled for you.
-- It pairs with **React Email**, so transactional templates (welcome,
-  invoice, password reset via Clerk webhook, low-stock alert) are written
-  as React components — consistent with the rest of the stack.
-- Nodemailer is a *transport library*, not a service — it still needs an
-  SMTP provider behind it (SES, Postmark, Gmail). It only makes sense if
-  you already have SES credentials or want to self-host sending.
-
-**Keep Nodemailer as a fallback interface**, not a second thing to
-maintain: build one `sendEmail()` function in `server/src/email/` that
-calls Resend, and structure it so swapping the provider means changing
-one file, not every call site.
-
----
-
-## 5. System architecture — the actual flow
+## Product identity
+Student Academic + Productivity SaaS. Core workflow the whole app hangs off:
 
 ```
-                         ┌─────────────────────┐
-                         │   apps/web (public)  │
-                         │  marketing + signup   │
-                         └──────────┬───────────┘
-                                    │ redirects to Clerk-hosted
-                                    │ signup/login
-                                    ▼
-┌───────────────────────────────────────────────────────────────┐
-│                         Clerk (Auth)                           │
-│  handles signup, login, session, org/team membership           │
-└──────────────────────────┬──────────────────────────────────┬──┘
-                            │ issues JWT                       │ webhooks
-                            ▼                                   ▼
-                 ┌────────────────────┐                 ┌───────────────┐
-                 │ apps/dashboard      │                 │ server/       │
-                 │ (authenticated SPA) │◄──REST/JSON────►│ Express API   │
-                 └─────────┬───────────┘   (axios)       └──────┬────────┘
-                           │                                     │
-                           │ websocket                           │
-                           ▼                                     ▼
-                 ┌────────────────────┐                 ┌───────────────┐
-                 │   Socket.io client  │◄───live events──│ Socket.io srv │
-                 └────────────────────┘                 └──────┬────────┘
-                                                                 │
-                              ┌──────────────────────────────────┼───────────────┐
-                              ▼                                  ▼               ▼
-                        ┌───────────┐                     ┌───────────┐  ┌─────────────┐
-                        │  Prisma    │                     │   Redis    │  │   Stripe     │
-                        │  → Postgres│                     │ cache/queue│  │  webhooks    │
-                        │(local/Neon)│                     │ + sockets  │  │  (billing)   │
-                        └───────────┘                     └───────────┘  └─────────────┘
-                                                                 │
-                                                                 ▼
-                                                          ┌───────────────┐
-                                                          │ Resend (email)│
-                                                          │ via BullMQ job│
-                                                          └───────────────┘
+Semester → Courses → Classes → Assignments → Exams → Grades
+         → Attendance → Tasks → Study → Projects → Progress
 ```
 
-**Request flow, concretely:**
-1. Visitor hits `apps/web`, clicks "Get started" → Clerk-hosted signup.
-2. Clerk creates the user + org, redirects into `apps/dashboard`.
-3. Dashboard's Clerk provider gives it a session JWT on every request.
-4. Every API call from the dashboard goes through one `axios` instance
-   (`lib/api.ts`) that attaches the Clerk JWT automatically.
-5. Express verifies the JWT (Clerk middleware), then runs your existing
-   `authenticate` → `authorize` (permission_code) middleware pair before
-   touching Prisma — this is the same RBAC pattern from the POS system,
-   reused here.
-6. Prisma reads/writes Postgres. Hot/frequently-read data (dashboard
-   summary stats, session data) goes through Redis first.
-7. Anything that should update live (new order, stock change, profit
-   number ticking) is emitted over Socket.io from the API after the DB
-   write commits — the dashboard just listens, it never polls.
-8. Background jobs (sending a welcome email, generating a CSV export,
-   nightly report) go on a Redis-backed BullMQ queue instead of blocking
-   the request — a worker process picks them up and calls Resend or
-   writes the export file.
-9. Stripe webhooks land on the Express API, update subscription state in
-   Postgres, and (via the same permission system) instantly change what
-   plan-gated features the org can see.
-
----
-
-## 6. Folder structure (target)
-
+Sidebar nav structure (already built — see below):
 ```
-vexez/
-├── apps/
-│   ├── web/                       # marketing site — current work
-│   │   └── src/
-│   │       ├── components/home/   # Navbar, Hero, Features, Pricing, ...
-│   │       ├── pages/Home.tsx
-│   │       └── lib/utils.ts
-│   │
-│   └── dashboard/                 # CRM app — new
-│       └── src/
-│           ├── app/
-│           │   ├── routes.tsx             # react-router route tree
-│           │   └── providers.tsx          # Clerk, QueryClient, SocketProvider
-│           ├── layouts/
-│           │   └── DashboardLayout.tsx    # sidebar + topbar shell
-│           ├── features/                  # one folder per domain, not per file-type
-│           │   ├── orders/
-│           │   │   ├── components/
-│           │   │   ├── hooks/useOrders.ts
-│           │   │   └── api.ts
-│           │   ├── products/
-│           │   ├── customers/
-│           │   ├── billing/               # Stripe UI (plan, invoices)
-│           │   ├── team/                  # org members, roles/permissions
-│           │   └── analytics/             # profit/sales charts
-│           ├── lib/
-│           │   ├── api.ts                 # axios instance + Clerk token interceptor
-│           │   ├── socket.ts              # Socket.io client singleton
-│           │   └── query-client.ts        # TanStack Query setup
-│           ├── components/ui/             # shadcn primitives (shared w/ web via packages/ui later)
-│           └── main.tsx
-│
-├── packages/
-│   └── ui/                         # extract shared design tokens/components once dashboard exists
-│
-├── server/
-│   ├── src/
-│   │   ├── index.ts                # Express app + Socket.io attach
-│   │   ├── routes/
-│   │   │   ├── orders.routes.ts
-│   │   │   ├── products.routes.ts
-│   │   │   ├── customers.routes.ts
-│   │   │   ├── billing.routes.ts   # Stripe webhook + checkout session
-│   │   │   └── team.routes.ts
-│   │   ├── middleware/
-│   │   │   ├── authenticate.ts     # verifies Clerk JWT
-│   │   │   └── authorize.ts        # permission_code check (RBAC, reused from POS system)
-│   │   ├── sockets/
-│   │   │   └── index.ts            # namespaces/rooms per org, emits on DB writes
-│   │   ├── jobs/                   # BullMQ queues + workers
-│   │   │   ├── email.queue.ts
-│   │   │   └── export.queue.ts
-│   │   ├── email/
-│   │   │   ├── sendEmail.ts        # single entrypoint (Resend, Nodemailer-fallback ready)
-│   │   │   └── templates/          # React Email templates
-│   │   ├── lib/
-│   │   │   ├── prisma.ts           # Prisma client singleton
-│   │   │   ├── redis.ts            # Redis client singleton
-│   │   │   └── stripe.ts           # Stripe client singleton
-│   │   └── webhooks/
-│   │       ├── clerk.webhook.ts
-│   │       └── stripe.webhook.ts
-│   └── prisma/
-│       ├── schema.prisma
-│       └── migrations/
-│
-├── package.json                    # npm workspaces root
-└── ARCHITECTURE.md                 # this file
+Semester selector (e.g. "Fall 2026 ▾")
+
+OVERVIEW
+ - Dashboard
+ - Calendar
+
+ACADEMICS
+ - My Courses
+ - Assignments
+ - Exams & Quizzes
+ - Grades & GPA
+ - Attendance
+
+STUDY
+ - Tasks
+ - Study Planner
+ - Notes
+ - Projects
+
+CAMPUS
+ - Groups & Teams
+ - Announcements
+ - Messages
+
+INSIGHTS
+ - Progress
+ - AI Study Assistant
+
+Bottom nav: Notifications, Settings, Profile
 ```
 
-**Rule of thumb:** inside `apps/dashboard/src/features/`, group by
-**domain** (orders, products, billing), not by file type. A feature
-folder owns its own components, hooks, and API calls — this is what
-lets a permission-gated module (e.g. billing) be added or removed
-without touching unrelated code, and it mirrors the `ac_modules →
-ac_resources → ac_actions` permission structure already in use.
+Routes live under `/app/*` (e.g. `/app/courses`, `/app/assignments`), not `/dashboard/*`.
 
----
+## What's built so far
 
-## 7. Build order (what actually happens next)
+- **Marketing landing page** (`Home.tsx`) — Navbar, Hero, LogoStrip, Features, GrowthShowcase, OrderControl, Pricing, Testimonials, FAQ, CTA, Footer in `src/components/home/`. Still reflects old positioning to some degree — copy/messaging pass not yet done for the student pivot, flagged as out of scope until asked.
+- **Login.tsx / SignUp.tsx** (`src/pages/`) — split-panel layout, shadcn Button/Input/Label, social login buttons, local-state validation with TODO markers for Clerk's `useSignIn()`/`useSignUp()`.
+- **App.tsx** wired with react-router-dom; Navbar/CTA link to `/login` and `/signup` via `<Link>`.
+- **DashboardLayout.tsx** (`src/layouts/`) — sidebar + topbar shell, rebuilt for the student nav structure above. Supports collapsed/expanded (icon-only) and mobile drawer states, semester selector dropdown near the top (mock semester list, not wired to real data yet), active-route highlighting via `layoutId` pill animation, bottom nav for Notifications/Settings/Profile pinned above the collapse toggle.
+- **Dashboard.tsx** (`src/pages/dashboard/`) — Overview home page. Stat cards (GPA, assignments due, attendance %, study hours), today's schedule list with a "Now" indicator, animated GPA trend sparkline (inline SVG, no chart library), due-soon assignments list, today's tasks checklist. All data is mock/local — no API wiring yet.
+- **ARCHITECTURE.md** — fully rewritten for the student-SaaS direction (previous CRM version is superseded, not merged). Covers: system flow diagram (Clerk → dashboard JWT → Express → Prisma/Postgres/Redis → Socket.io → BullMQ → Resend), **semester scoping** as a first-class concept (which entities are semester-bound — Courses/Assignments/Exams/Grades/Attendance — vs. persistent across semesters — Tasks/Notes/Projects/Groups/Messages), target Prisma schema shape (Student, Semester, Course, Assignment, Exam, Grade, AttendanceRecord, Task, StudyBlock, Note, Project, Group, Announcement, Message), a Socket.io event catalog re-scoped to `student:{id}` / `group:{id}` / `course:{id}` rooms, and a 15-step build order.
 
-1. **Workspace setup** — convert repo to npm workspaces, move current
-   `Home.tsx` app into `apps/web`, scaffold `apps/dashboard` and `server/`.
-2. **Auth** — wire Clerk into both apps; protect `apps/dashboard` routes
-   with a `RequireAuth` wrapper; verify JWT in Express.
-3. **Database** — write `schema.prisma` (Org, User, Product, Order,
-   Customer, Subscription, and the existing permission_code RBAC tables),
-   run first migration against local Postgres, then against Neon.
-4. **Dashboard shell** — layout, sidebar nav, empty route pages for each
-   feature domain.
-5. **Core CRUD** — Products and Orders first (they're what the marketing
-   page's mockups already promise), wired to Prisma via Express routes.
-6. **Real-time** — Socket.io server + client, live order status and
-   dashboard numbers.
-7. **Redis** — session/rate-limit cache, then BullMQ for background jobs.
-8. **Email** — Resend + React Email templates, sent via the job queue.
-9. **Billing** — Stripe checkout for the three pricing tiers, webhook
-   syncing subscription status, plan-gated feature checks reusing the
-   permission system.
-10. **Polish** — analytics/reporting exports, team management UI.
+## Deleted / removed (confirm this happened on your end before continuing)
+The following CRM-era files should be deleted, not repurposed: `Orders.tsx`, `Products.tsx`, `Customers.tsx`, `Analytics.tsx`, `Settings.tsx` (old CRM version — will be rebuilt fresh for student settings later), and their routes in `App.tsx`. The old ARCHITECTURE.md content is fully superseded by the new one.
 
-Each step should land as its own PR against this structure — nothing
-here is built until it appears in a numbered step above.
+## Working preferences — important
+- Hand over **single, self-contained `.tsx` components**, not pre-split into many small files — I break them apart myself.
+- Do **NOT** restructure folders/repo shape on your own initiative. Give me the plan or the files; I place them.
+- I'm using the actual shadcn CLI (not hand-rolled shadcn-style components) — generate code compatible with `npx shadcn add <component>` for Base UI/Nova, or tell me which primitives to add via the CLI myself.
+- Keep responses focused on working code + brief rationale, not lengthy pre-explanation.
+- **One component/piece at a time.** Don't batch multiple pages/files in one response unless explicitly told to. Ask before proceeding if the next step is ambiguous.
+- **Adjust/reframe existing work before adding new work**, when a pivot or correction is in progress — don't stack new pages on top of an inconsistent base.
+- When I say **"create the prompt,"** that means stop building and instead write a handoff summary like this one — don't interpret it as a request for a different kind of deliverable.
+
+## Next up (per ARCHITECTURE.md build order, step 6)
+
+Everything through step 5 (workspace, auth plan, DB plan, dashboard shell, Dashboard page) is either done or scoped. **Step 6 — Semester context/provider — is next and has not been started.** This needs to exist before Courses/Assignments/Grades/Attendance pages can be built, since those are semester-scoped and the sidebar's semester selector is currently just local UI state with no app-wide context behind it.
+
+Concretely, step 6 likely means: a `SemesterProvider` (React context) wrapping the dashboard app alongside wherever Clerk/QueryClient providers will eventually live (`app/providers.tsx` per ARCHITECTURE.md's target folder structure — not yet created), exposing the currently-selected semester to any component that needs to scope its data/API calls to it. The `DashboardLayout.tsx` sidebar's semester dropdown should eventually read/write this context instead of its own local `useState`.
+
+Ask me to confirm scope/approach for the Semester provider before building it — don't assume implementation details (e.g. whether semester list is hardcoded for now vs. fetched, whether it persists to localStorage) without checking.

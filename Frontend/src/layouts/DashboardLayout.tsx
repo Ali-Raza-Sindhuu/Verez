@@ -1,34 +1,103 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
-  ShoppingCart,
-  Package,
-  Users,
+  Calendar,
+  BookOpen,
+  FileText,
+  GraduationCap,
   BarChart3,
-  Settings,
-  ChevronsLeft,
-  Menu,
+  CalendarCheck,
+  ListChecks,
+  CalendarClock,
+  StickyNote,
+  FolderKanban,
+  Users,
+  Megaphone,
+  MessageSquare,
+  TrendingUp,
+  Sparkles,
   Bell,
-  Search,
+  Settings,
+  UserCircle,
+  ChevronsLeft,
   ChevronDown,
+  Menu,
+  Search,
 } from "lucide-react";
 
-const nav = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
-  { label: "Products", href: "/dashboard/products", icon: Package },
-  { label: "Customers", href: "/dashboard/customers", icon: Users },
-  { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
-  { label: "Settings", href: "/dashboard/settings", icon: Settings },
+interface NavItem {
+  label: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+}
+
+interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
+const sections: NavSection[] = [
+  {
+    label: "Overview",
+    items: [
+      { label: "Dashboard", href: "/app", icon: LayoutDashboard },
+      { label: "Calendar", href: "/app/calendar", icon: Calendar },
+    ],
+  },
+  {
+    label: "Academics",
+    items: [
+      { label: "My Courses", href: "/app/courses", icon: BookOpen },
+      { label: "Assignments", href: "/app/assignments", icon: FileText },
+      { label: "Exams & Quizzes", href: "/app/exams", icon: GraduationCap },
+      { label: "Grades & GPA", href: "/app/grades", icon: BarChart3 },
+      { label: "Attendance", href: "/app/attendance", icon: CalendarCheck },
+    ],
+  },
+  {
+    label: "Study",
+    items: [
+      { label: "Tasks", href: "/app/tasks", icon: ListChecks },
+      { label: "Study Planner", href: "/app/planner", icon: CalendarClock },
+      { label: "Notes", href: "/app/notes", icon: StickyNote },
+      { label: "Projects", href: "/app/projects", icon: FolderKanban },
+    ],
+  },
+  {
+    label: "Campus",
+    items: [
+      { label: "Groups & Teams", href: "/app/groups", icon: Users },
+      { label: "Announcements", href: "/app/announcements", icon: Megaphone },
+      { label: "Messages", href: "/app/messages", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Insights",
+    items: [
+      { label: "Progress", href: "/app/progress", icon: TrendingUp },
+      { label: "AI Study Assistant", href: "/app/assistant", icon: Sparkles },
+    ],
+  },
 ];
+
+const bottomNav: NavItem[] = [
+  { label: "Notifications", href: "/app/notifications", icon: Bell },
+  { label: "Settings", href: "/app/settings", icon: Settings },
+  { label: "Profile", href: "/app/profile", icon: UserCircle },
+];
+
+const semesters = ["Fall 2026", "Summer 2026", "Spring 2026", "Fall 2025"];
 
 export default function DashboardLayout({ children }: { children?: ReactNode }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [semester, setSemester] = useState(semesters[0]);
+  const [semesterOpen, setSemesterOpen] = useState(false);
+  const semesterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const check = () => {
@@ -41,11 +110,30 @@ export default function DashboardLayout({ children }: { children?: ReactNode }) 
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  useEffect(() => {
+    setMobileOpen(false);
+    setSemesterOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!semesterOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (semesterRef.current && !semesterRef.current.contains(e.target as Node)) {
+        setSemesterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [semesterOpen]);
+
   const sidebarWidth = collapsed ? 76 : 248;
+  const showLabels = !collapsed || isMobile;
+
+  const isActive = (href: string) =>
+    href === "/app" ? location.pathname === "/app" : location.pathname.startsWith(href);
 
   return (
     <div className="min-h-screen bg-ink text-cream flex">
-      {/* Mobile overlay */}
       <AnimatePresence>
         {isMobile && mobileOpen && (
           <motion.div
@@ -58,74 +146,140 @@ export default function DashboardLayout({ children }: { children?: ReactNode }) 
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
       <motion.aside
-        animate={{
-          width: isMobile ? (mobileOpen ? 248 : 0) : sidebarWidth,
-        }}
+        animate={{ width: isMobile ? (mobileOpen ? 248 : 0) : sidebarWidth }}
         transition={{ duration: 0.25, ease: "easeInOut" }}
         className={`fixed md:sticky top-0 h-screen z-50 border-r border-white/8 bg-ink flex flex-col overflow-hidden ${
           isMobile && !mobileOpen ? "pointer-events-none" : ""
         }`}
       >
         <div className="flex items-center h-16 px-4 border-b border-white/8 shrink-0">
-          <Link to="/dashboard" className="flex items-center gap-2 font-display font-semibold text-lg tracking-tight shrink-0">
+          <Link to="/app" className="flex items-center gap-2 font-display font-semibold text-lg tracking-tight shrink-0">
             <span className="w-8 h-8 rounded-md bg-teal flex items-center justify-center text-ink font-bold shrink-0">
               V
             </span>
-            {(!collapsed || isMobile) && <span className="whitespace-nowrap">Vexez</span>}
+            {showLabels && <span className="whitespace-nowrap">Vexez</span>}
           </Link>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {nav.map((item) => {
-            const active = location.pathname === item.href;
+        <div className="px-3 pt-3 shrink-0" ref={semesterRef}>
+          <div className="relative">
+            <button
+              onClick={() => showLabels && setSemesterOpen((o) => !o)}
+              className={`w-full flex items-center gap-2.5 rounded-xl border border-white/8 bg-white/[0.03] hover:bg-white/5 transition-colors ${
+                showLabels ? "px-3 py-2.5 justify-between" : "px-0 py-2.5 justify-center"
+              }`}
+              title={!showLabels ? semester : undefined}
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="w-7 h-7 rounded-lg bg-teal/10 text-teal flex items-center justify-center shrink-0">
+                  <Calendar className="w-3.5 h-3.5" />
+                </span>
+                {showLabels && (
+                  <span className="text-sm font-medium truncate">{semester}</span>
+                )}
+              </div>
+              {showLabels && (
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-slate-text shrink-0 transition-transform ${
+                    semesterOpen ? "rotate-180" : ""
+                  }`}
+                />
+              )}
+            </button>
+
+            {semesterOpen && showLabels && (
+              <div className="absolute left-0 right-0 top-full mt-1.5 rounded-xl border border-white/8 bg-ink shadow-[0_20px_50px_rgba(0,0,0,.5)] py-1.5 z-50">
+                {semesters.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => {
+                      setSemester(s);
+                      setSemesterOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                      s === semester ? "text-teal" : "text-slate-text hover:text-cream hover:bg-white/5"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+          {sections.map((section) => (
+            <div key={section.label}>
+              {showLabels && (
+                <div className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-text/60">
+                  {section.label}
+                </div>
+              )}
+              <div className="space-y-0.5">
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      to={item.href}
+                      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
+                        active ? "bg-teal/10 text-teal" : "text-slate-text hover:text-cream hover:bg-white/5"
+                      }`}
+                      title={!showLabels ? item.label : undefined}
+                    >
+                      {active && (
+                        <motion.span
+                          layoutId="active-nav-pill"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-teal"
+                        />
+                      )}
+                      <Icon className="w-[18px] h-[18px] shrink-0" />
+                      {showLabels && <span className="whitespace-nowrap font-medium">{item.label}</span>}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        <div className="p-3 border-t border-white/8 shrink-0 space-y-0.5">
+          {bottomNav.map((item) => {
             const Icon = item.icon;
+            const active = isActive(item.href);
             return (
               <Link
-                key={item.label}
+                key={item.href}
                 to={item.href}
-                onClick={() => isMobile && setMobileOpen(false)}
-                className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
-                  active
-                    ? "bg-teal/10 text-teal"
-                    : "text-slate-text hover:text-cream hover:bg-white/5"
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
+                  active ? "bg-teal/10 text-teal" : "text-slate-text hover:text-cream hover:bg-white/5"
                 }`}
-                title={collapsed && !isMobile ? item.label : undefined}
+                title={!showLabels ? item.label : undefined}
               >
-                {active && (
-                  <motion.span
-                    layoutId="active-nav-pill"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-teal"
-                  />
-                )}
                 <Icon className="w-[18px] h-[18px] shrink-0" />
-                {(!collapsed || isMobile) && (
-                  <span className="whitespace-nowrap font-medium">{item.label}</span>
-                )}
+                {showLabels && <span className="whitespace-nowrap font-medium">{item.label}</span>}
               </Link>
             );
           })}
-        </nav>
 
-        {!isMobile && (
-          <div className="p-3 border-t border-white/8 shrink-0">
+          {!isMobile && (
             <button
               onClick={() => setCollapsed((c) => !c)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-text hover:text-cream hover:bg-white/5 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-text hover:text-cream hover:bg-white/5 transition-colors mt-1"
             >
               <ChevronsLeft
                 className={`w-[18px] h-[18px] shrink-0 transition-transform ${collapsed ? "rotate-180" : ""}`}
               />
               {!collapsed && <span className="whitespace-nowrap">Collapse</span>}
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </motion.aside>
 
-      {/* Main column */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Topbar */}
         <header className="sticky top-0 z-30 h-16 border-b border-white/8 bg-ink/85 backdrop-blur-md flex items-center justify-between px-4 md:px-6 gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <button
@@ -140,7 +294,7 @@ export default function DashboardLayout({ children }: { children?: ReactNode }) 
               <Search className="w-4 h-4 text-slate-text shrink-0" />
               <input
                 type="text"
-                placeholder="Search orders, products..."
+                placeholder="Search courses, assignments..."
                 className="bg-transparent text-sm placeholder:text-slate-text focus:outline-none w-full"
               />
             </div>
@@ -164,10 +318,7 @@ export default function DashboardLayout({ children }: { children?: ReactNode }) 
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 p-4 md:p-6">
-          {children ?? <Outlet />}
-        </main>
+        <main className="flex-1 p-4 md:p-6">{children ?? <Outlet />}</main>
       </div>
     </div>
   );
