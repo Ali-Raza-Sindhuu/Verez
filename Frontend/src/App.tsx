@@ -18,6 +18,11 @@ import Attendance from "./pages/Attendance";
 import Tasks from "./pages/Tasks";
 import StudyPlanner from "./pages/StudyPlanner";
 import Notes from "./pages/Notes";
+import Projects from "./pages/Projects";
+import Progress from "./pages/Progress";
+import GroupsTeams from "./pages/Groups&Teams";
+import Announcements from "./pages/Announcement";
+import Messages from "./pages/Messages";
 
 
 
@@ -58,6 +63,12 @@ export default function App() {
           <Route path="tasks" element={<Tasks/>} />
           <Route path="planner" element={<StudyPlanner/>} />
           <Route path="notes" element={<Notes/>} />
+          <Route path="projects" element={<Projects/>} />
+          <Route path="groups" element={<GroupsTeams/>} />
+          <Route path="announcements" element={<Announcements/>} />
+          <Route path="messages" element={<Messages/>} />
+          <Route path="progress" element={<Progress/>} />
+          
         </Route>
       </Routes>
     </BrowserRouter>
