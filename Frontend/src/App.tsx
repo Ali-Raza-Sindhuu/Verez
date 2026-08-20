@@ -1,75 +1,117 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/auth/Login";
-import SignUp from "./pages/auth/SignUp";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import ResetPassword from "./pages/auth/ResetPassword";
-
-import DashboardLayout from "./layouts/DashboardLayout";
-import Dashboard from "./pages/Dashboard";
-import Courses from "./pages/Courses";
-import Calendar from "./pages/Calender";
-import Assignments from "./pages/Assignments";
-import ExamsQuizzes from "./pages/Exams&Quizez";
-import { useApi } from "@/lib/api";
 import { useEffect } from "react";
-import Grades from "./pages/Grades";
-import Attendance from "./pages/Attendance";
-import Tasks from "./pages/Tasks";
-import StudyPlanner from "./pages/StudyPlanner";
-import Notes from "./pages/Notes";
-import Projects from "./pages/Projects";
-import Progress from "./pages/Progress";
-import GroupsTeams from "./pages/Groups&Teams";
-import Announcements from "./pages/Announcement";
-import Messages from "./pages/Messages";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import { useAppDispatch } from "@/store/hooks";
+import { bootstrapAuth } from "@/store/features/auth/authSlice";
+import ProtectedRoute from "@/components/common/ProtectedRoute";
 
+// Public
+import Home from "@/pages/marketing/Home";
+import NotFound from "@/pages/NotFound";
+
+// Auth
+import Login from "@/pages/auth/Login";
+import SignUp from "@/pages/auth/SignUp";
+import ForgotPassword from "@/pages/auth/ForgotPassword";
+import ResetPassword from "@/pages/auth/ResetPassword";
+import OAuthCallback from "@/pages/auth/OAuthCallback";
+
+// Dashboard shell
+import DashboardLayout from "@/layouts/dashboard/DashboardLayout";
+
+// Overview
+import Dashboard from "@/pages/dashboard/overview/Dashboard";
+import Calendar from "@/pages/dashboard/overview/Calendar";
+
+// Academics
+import Courses from "@/pages/dashboard/academics/Courses";
+import CourseRegistrationPage from "@/pages/dashboard/academics/CourseRegistrationPage";
+import Assignments from "@/pages/dashboard/academics/Assignments";
+import ExamsQuizzes from "@/pages/dashboard/academics/ExamsQuizzes";
+import Grades from "@/pages/dashboard/academics/Grades";
+import Attendance from "@/pages/dashboard/academics/Attendance";
+
+// Study
+import Tasks from "@/pages/dashboard/study/Tasks";
+import StudyPlanner from "@/pages/dashboard/study/StudyPlanner";
+import Notes from "@/pages/dashboard/study/Notes";
+import Projects from "@/pages/dashboard/study/Projects";
+
+// Campus
+import GroupsTeams from "@/pages/dashboard/campus/GroupsTeams";
+import Announcements from "@/pages/dashboard/campus/Announcements";
+import Messages from "@/pages/dashboard/campus/Messages";
+
+// Insights
+import Progress from "@/pages/dashboard/insights/Progress";
+import AiStudyAssistant from "@/pages/dashboard/insights/AiStudyAssistant";
+
+// Account
+import Notifications from "@/pages/dashboard/account/Notifications";
+import Settings from "@/pages/dashboard/account/Settings";
+import Profile from "@/pages/dashboard/account/Profile";
 
 export default function App() {
-  const { apiFetch } = useApi();
+  const dispatch = useAppDispatch();
+
+  // On app load, silently try to exchange the refresh-token cookie (if any)
+  // for a fresh access token, so refreshing the page doesn't log you out.
   useEffect(() => {
-    async function testConnection() {
-      try {
-        const response = await apiFetch("/health");
+    dispatch(bootstrapAuth());
+  }, [dispatch]);
 
-        const data = await response.json();
-
-        console.log("✅ Backend connected:", data);
-      } catch (error) {
-        console.error("❌ Backend connection failed:", error);
-      }
-    }
-
-    testConnection();
-  }, []);
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public marketing page */}
         <Route path="/" element={<Home />} />
+
+        {/* Auth pages — always accessible, no auto-redirect based on login state */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
 
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="courses" element={<Courses/>} />
-          <Route path="calendar" element={<Calendar/>} />
-          <Route path="assignments" element={<Assignments/>} />
-          <Route path="exams" element={<ExamsQuizzes/>} />
-          <Route path="attendance" element={<Attendance/>} />
-          <Route path="grades" element={<Grades/>} />
-          <Route path="tasks" element={<Tasks/>} />
-          <Route path="planner" element={<StudyPlanner/>} />
-          <Route path="notes" element={<Notes/>} />
-          <Route path="projects" element={<Projects/>} />
-          <Route path="groups" element={<GroupsTeams/>} />
-          <Route path="announcements" element={<Announcements/>} />
-          <Route path="messages" element={<Messages/>} />
-          <Route path="progress" element={<Progress/>} />
-          
+        {/* Authenticated app — everything under here requires a valid session */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            {/* Overview */}
+            <Route index element={<Dashboard />} />
+            <Route path="calendar" element={<Calendar />} />
+
+            {/* Academics */}
+            <Route path="courses" element={<Courses />} />
+            <Route path="courses/register" element={<CourseRegistrationPage />} />
+            <Route path="assignments" element={<Assignments />} />
+            <Route path="exams" element={<ExamsQuizzes />} />
+            <Route path="grades" element={<Grades />} />
+            <Route path="attendance" element={<Attendance />} />
+
+            {/* Study */}
+            <Route path="tasks" element={<Tasks />} />
+            <Route path="planner" element={<StudyPlanner />} />
+            <Route path="notes" element={<Notes />} />
+            <Route path="projects" element={<Projects />} />
+
+            {/* Campus */}
+            <Route path="groups" element={<GroupsTeams />} />
+            <Route path="announcements" element={<Announcements />} />
+            <Route path="messages" element={<Messages />} />
+
+            {/* Insights */}
+            <Route path="progress" element={<Progress />} />
+            <Route path="assistant" element={<AiStudyAssistant />} />
+
+            {/* Account */}
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
         </Route>
+
+        {/* Catch-all — must stay last */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

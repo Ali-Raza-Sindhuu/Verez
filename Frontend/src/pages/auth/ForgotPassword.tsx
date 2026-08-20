@@ -12,14 +12,18 @@ import {
   PrimaryButton,
 } from "@/layouts/AuthLayout";
 import { VexezMark } from "@/components/common/Logo";
+import { useAppDispatch } from "@/store/hooks";
+import { forgotPassword } from "@/store/features/auth/authSlice";
 
 export default function ForgotPassword() {
+  const dispatch = useAppDispatch();
+
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
@@ -29,10 +33,18 @@ export default function ForgotPassword() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    console.log("[ForgotPassword] dispatching forgotPassword with:", email);
+    const result = await dispatch(forgotPassword({ email }));
+    console.log("[ForgotPassword] result:", result);
+    setLoading(false);
+
+    if (forgotPassword.fulfilled.match(result)) {
+      console.log("[ForgotPassword] fulfilled");
       setSent(true);
-    }, 900);
+    } else {
+      console.log("[ForgotPassword] rejected, payload:", result.payload);
+      setError((result.payload as string) ?? "Something went wrong. Try again.");
+    }
   }
 
   return (

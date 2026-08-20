@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, ArrowRight, CircleCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,16 @@ import {
   passwordRequirements,
 } from "@/layouts/AuthLayout";
 import { VexezMark } from "@/components/common/Logo";
+import { useAppDispatch } from "@/store/hooks";
+import { resetPassword } from "@/store/features/auth/authSlice";
 
 const REDIRECT_SECONDS = 4;
 
 export default function ResetPassword() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,10 +37,14 @@ export default function ResetPassword() {
   const requirements = passwordRequirements(password);
   const allMet = requirements.every((r) => r.met);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
+    if (!token) {
+      setError("This reset link is missing or invalid. Request a new one.");
+      return;
+    }
     if (!password || !confirmPassword) {
       setError("Fill in both fields to continue.");
       return;
@@ -50,11 +59,21 @@ export default function ResetPassword() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    const result = await dispatch(resetPassword({ token, password }));
+    setLoading(false);
+
+    if (resetPassword.fulfilled.match(result)) {
       setDone(true);
-    }, 900);
+    } else {
+      setError((result.payload as string) ?? "Couldn't reset password. Try again.");
+    }
   }
+
+  useEffect(() => {
+    if (!token) {
+      setError("This reset link is missing or invalid. Request a new one.");
+    }
+  }, [token]);
 
   useEffect(() => {
     if (!done) return;

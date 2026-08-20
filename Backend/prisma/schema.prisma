@@ -1,92 +1,33 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  STUDENT
+  TEACHER
+}
+
 model User {
-  id           Int          @id @default(autoincrement())
-  name         String
-  email        String       @unique
-  password     String
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime
-  userBranches UserBranch[]
-  userRoles    UserRole[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  // Optional now: OAuth users (Google/GitHub) never set a password.
+  password  String?
+  role      Role     @default(STUDENT)
 
+  // Set only for OAuth-created/linked accounts, e.g. "google" | "github".
+  provider   String?
+  providerId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerId])
   @@map("users")
-}
-
-model Role {
-  id              Int              @id @default(autoincrement())
-  name            String           @unique
-  description     String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime
-  rolePermissions RolePermission[]
-  userRoles       UserRole[]
-
-  @@map("roles")
-}
-
-model UserRole {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  roleId    Int      @map("role_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, roleId])
-  @@map("user_roles")
-}
-
-model Permission {
-  id              Int              @id @default(autoincrement())
-  name            String           @unique
-  description     String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime
-  rolePermissions RolePermission[]
-
-  @@map("permissions")
-}
-
-model RolePermission {
-  id           Int        @id @default(autoincrement())
-  roleId       Int        @map("role_id")
-  permissionId Int        @map("permission_id")
-  createdAt    DateTime   @default(now()) @map("created_at")
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-
-  @@unique([roleId, permissionId])
-  @@map("role_permissions")
-}
-
-model Branch {
-  id           Int          @id @default(autoincrement())
-  name         String
-  address      String?
-  isActive     Boolean      @default(true) @map("is_active")
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt @map("updated_at")
-  userBranches UserBranch[]
-
-  @@map("branches")
-}
-
-model UserBranch {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  branchId  Int      @map("branch_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, branchId])
-  @@map("user_branches")
 }

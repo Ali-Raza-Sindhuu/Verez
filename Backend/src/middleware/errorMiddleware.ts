@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Prisma } from "../generated/prisma/client.js";
 import { ZodError } from "zod";
+import { AuthError } from "../modules/auth/authService.js";
 
 export const errorMiddleware = (
   error: unknown,
@@ -8,7 +9,16 @@ export const errorMiddleware = (
   res: Response,
   _next: NextFunction
 ) => {
-  console.error(error);
+  if (error instanceof AuthError) {
+    // Expected client-side auth failures (no cookie yet, expired token,
+    // wrong password, etc.) — not server bugs, don't spam the logs.
+    res.status(error.status).json({
+      success: false,
+      message: error.message,
+    });
+
+    return;
+  }
 
   if (error instanceof ZodError) {
     res.status(400).json({
@@ -34,6 +44,9 @@ export const errorMiddleware = (
 
     return;
   }
+
+  // Only log genuinely unexpected errors.
+  console.error(error);
 
   res.status(500).json({
     success: false,

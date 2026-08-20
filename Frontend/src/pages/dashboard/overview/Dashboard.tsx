@@ -10,6 +10,8 @@ import {
   MoreHorizontal,
   Sparkles,
 } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
+import { selectAuthUser } from "@/store/features/auth/authSlice";
 
 interface Stat {
   label: string;
@@ -91,12 +93,27 @@ const cx = {
   accentDot: "bg-[var(--color-accent-primary)]",
 };
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 5) return "Good night";
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  if (hour < 21) return "Good evening";
+  return "Good night";
+}
+
 export default function Dashboard() {
+  const user = useAppSelector(selectAuthUser);
+  const firstName = user?.name?.split(" ")[0] ?? "";
+  const greeting = getGreeting();
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="max-w-7xl mx-auto">
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className={`font-display text-2xl font-semibold tracking-tight ${cx.textPrimary}`}>Good morning, Ali</h1>
+          <h1 className={`font-display text-2xl font-semibold tracking-tight ${cx.textPrimary}`}>
+            {greeting}, {firstName}
+          </h1>
           <p className={`text-sm mt-1 ${cx.textSecondary}`}>Here's what's on your plate today.</p>
         </div>
         <button className="inline-flex items-center gap-1.5 bg-[var(--color-accent-primary)] text-white text-sm font-medium px-4 py-2 rounded-full hover:opacity-90 transition-opacity self-start sm:self-auto shadow-[var(--shadow-cta-glow)]">
