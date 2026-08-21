@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Course, RegistrationFilters, RegistrationStep } from "./types";
-import { mockCourses } from "./mockCourses";
 import { detectConflicts, totalCreditsOf } from "./conflicts";
 import { RegistrationHeader } from "./RegistrationHeader";
 import { RegistrationSteps } from "./RegistrationSteps";
@@ -15,6 +14,20 @@ import { RegistrationActions } from "./RegistrationActions";
 import { ConflictAlert } from "./ConflictAlert";
 import { ReviewSchedule } from "./ReviewSchedule";
 import { ConfirmRegistration } from "./ConfirmRegistration";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+  fetchAvailableCourses,
+  fetchMyEnrollments,
+  registerCourses,
+  selectAvailableCourses,
+  selectAvailableCoursesStatus,
+  selectMyEnrollments,
+  selectMyEnrollmentsStatus,
+  selectRegisterStatus,
+  selectRegisterError,
+  clearRegisterError,
+  type AvailableCourse,
+} from "@/store/features/course/courseSlice";
 
 const initialFilters: RegistrationFilters = {
   search: "",
@@ -23,28 +36,82 @@ const initialFilters: RegistrationFilters = {
   category: "all",
 };
 
+// Backend's AvailableCourse is flat (scheduleDays/startTime/endTime/room at
+// the top level); this module's presentational components expect a nested
+// `schedule` object. Map at the boundary so none of the card/detail/summary
+// components need to change.
+function toLocalCourse(c: AvailableCourse): Course {
+  return {
+    id: c.id,
+    code: c.course.code,
+    name: c.course.name,
+    description: c.course.description,
+    category: c.course.category as any,
+    department: c.course.department,
+    instructor: c.teacher?.name ?? "TBA",
+    credits: c.course.credits,
+    level: c.course.level as any,
+    seatsTotal: c.seatsTotal,
+    seatsTaken: c.seatsTaken,
+    prerequisites: [],
+    schedule: {
+      days: c.scheduleDays,
+      startTime: c.startTime,
+      endTime: c.endTime,
+      room: c.room,
+    },
+  };
+}
+
 interface CourseRegistrationProps {
   onBack: () => void;
   onDone: () => void;
 }
 
 export default function CourseRegistration({ onBack, onDone }: CourseRegistrationProps) {
+  const dispatch = useAppDispatch();
+
+  const availableCourses = useAppSelector(selectAvailableCourses);
+  const availableStatus = useAppSelector(selectAvailableCoursesStatus);
+  const loading = availableStatus === "idle" || availableStatus === "loading";
+
+  const myEnrollments = useAppSelector(selectMyEnrollments);
+  const enrollmentsStatus = useAppSelector(selectMyEnrollmentsStatus);
+
+  const registerStatus = useAppSelector(selectRegisterStatus);
+  const registerError = useAppSelector(selectRegisterError);
+
   const [step, setStep] = useState<RegistrationStep>(1);
-  const [loading, setLoading] = useState(true);
-  const [allCourses, setAllCourses] = useState<Course[]>([]);
   const [filters, setFilters] = useState<RegistrationFilters>(initialFilters);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [detailsCourse, setDetailsCourse] = useState<Course | null>(null);
   const [registered, setRegistered] = useState<Course[]>([]);
 
-  // Simulated fetch — swap for GET /api/courses/available.
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setAllCourses(mockCourses);
-      setLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
-  }, []);
+    if (availableStatus === "idle") dispatch(fetchAvailableCourses(undefined));
+  }, [availableStatus, dispatch]);
+
+  useEffect(() => {
+    if (enrollmentsStatus === "idle") dispatch(fetchMyEnrollments());
+  }, [enrollmentsStatus, dispatch]);
+
+  const allCourses = useMemo(() => availableCourses.map(toLocalCourse), [availableCourses]);
+
+  // Real enrollment data, not mock arrays — used only for instant client-side
+  // feedback in detectConflicts(); the backend re-validates all of this.
+  const registeredCodes = useMemo(
+    () => new Set(myEnrollments.filter((e) => e.status !== "dropped").map((e) => e.code)),
+    [myEnrollments]
+  );
+  const completedCodes = useMemo(
+    () => myEnrollments.filter((e) => e.status === "completed").map((e) => e.code),
+    [myEnrollments]
+  );
+
+  const departments = useMemo(
+    () => Array.from(new Set(allCourses.map((c) => c.department))).sort(),
+    [allCourses]
+  );
 
   const filteredCourses = useMemo(() => {
     return allCourses.filter((c) => {
@@ -63,10 +130,13 @@ export default function CourseRegistration({ onBack, onDone }: CourseRegistratio
     [allCourses, selectedIds]
   );
 
-  const conflicts = useMemo(() => detectConflicts(selectedCourses), [selectedCourses]);
+  const conflicts = useMemo(
+    () => detectConflicts(selectedCourses, Array.from(registeredCodes), completedCodes),
+    [selectedCourses, registeredCodes, completedCodes]
+  );
   const totalCredits = totalCreditsOf(selectedCourses);
 
-  function toggleCourse(id: string) {
+  function toggleCourse(id: number) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -75,7 +145,7 @@ export default function CourseRegistration({ onBack, onDone }: CourseRegistratio
     });
   }
 
-  function removeCourse(id: string) {
+  function removeCourse(id: number) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.delete(id);
@@ -87,14 +157,19 @@ export default function CourseRegistration({ onBack, onDone }: CourseRegistratio
     setSelectedIds(new Set());
   }
 
-  function handleConfirmRegistration() {
-    setRegistered(selectedCourses);
-    setStep(3);
+  async function handleConfirmRegistration() {
+    dispatch(clearRegisterError());
+    const result = await dispatch(registerCourses({ offeringIds: Array.from(selectedIds), semesterId: 1 }));
+    if (registerCourses.fulfilled.match(result)) {
+      setRegistered(selectedCourses);
+      setStep(3);
+      // Registered courses now show up in My Courses — refresh so it's
+      // current next time the student navigates there.
+      dispatch(fetchMyEnrollments());
+    }
+    // On rejection, registerError is already populated in the slice and
+    // surfaced via ConflictAlert/RegistrationActions below — stay on step 2.
   }
-
-  // TODO: once POST /api/course-registrations exists, call it in
-  // handleConfirmRegistration above with selectedCourses, and only advance
-  // to step 3 / setRegistered on success — treat this as the optimistic path.
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -112,7 +187,7 @@ export default function CourseRegistration({ onBack, onDone }: CourseRegistratio
             className="grid grid-cols-1 lg:grid-cols-3 gap-6"
           >
             <div className="lg:col-span-2 min-w-0">
-              <CourseFilters filters={filters} onChange={setFilters} />
+              <CourseFilters filters={filters} onChange={setFilters} departments={departments} />
               <CourseTabs
                 active={filters.category}
                 onChange={(category) => setFilters((f) => ({ ...f, category }))}
@@ -121,6 +196,7 @@ export default function CourseRegistration({ onBack, onDone }: CourseRegistratio
               <AvailableCourseList
                 courses={filteredCourses}
                 selectedIds={selectedIds}
+                registeredCodes={registeredCodes}
                 onToggle={toggleCourse}
                 onViewDetails={setDetailsCourse}
                 loading={loading}
@@ -157,6 +233,11 @@ export default function CourseRegistration({ onBack, onDone }: CourseRegistratio
             transition={{ duration: 0.25 }}
             className="max-w-3xl mx-auto"
           >
+            {registerError && (
+              <div className="mb-4 rounded-xl border border-[var(--color-accent-danger)]/20 bg-[var(--color-accent-danger)]/5 px-4 py-3 text-sm text-[var(--color-accent-danger)]">
+                {registerError}
+              </div>
+            )}
             <ReviewSchedule
               selected={selectedCourses}
               conflicts={conflicts}
@@ -182,6 +263,7 @@ export default function CourseRegistration({ onBack, onDone }: CourseRegistratio
       <CourseDetails
         course={detailsCourse}
         selected={detailsCourse ? selectedIds.has(detailsCourse.id) : false}
+        isRegistered={detailsCourse ? registeredCodes.has(detailsCourse.code) : false}
         onClose={() => setDetailsCourse(null)}
         onToggle={() => detailsCourse && toggleCourse(detailsCourse.id)}
       />

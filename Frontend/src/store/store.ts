@@ -1,12 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
-import semesterReducer from "./features/semester/semesterSlice";
 import authReducer from "./features/auth/authSlice";
+import coursesReducer from "./features/course/courseSlice";
+import assignmentsReducer from "./features/assignments/assignmentSlice";
+import gradesReducer from "./features/grades/gradesSlice";
 import { injectStore } from "@/lib/api";
+
+// NOTE: no semesterSlice exists in this project — each domain (grades,
+// assessments, attendance) tracks its own `selectedSemesterId` locally,
+// seeded from that domain's own "current semester" API response, rather
+// than inventing a shared cross-cutting slice that wasn't asked for.
 
 export const store = configureStore({
   reducer: {
-    semester: semesterReducer,
     auth: authReducer,
+    courses: coursesReducer,
+    assignments: assignmentsReducer,
+    grades: gradesReducer,
   },
 });
 

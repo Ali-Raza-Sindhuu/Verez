@@ -11,23 +11,474 @@ datasource db {
 enum Role {
   STUDENT
   TEACHER
+  ADMIN
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  // Optional now: OAuth users (Google/GitHub) never set a password.
-  password  String?
-  role      Role     @default(STUDENT)
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  password String?
+  role     Role    @default(STUDENT)
 
-  // Set only for OAuth-created/linked accounts, e.g. "google" | "github".
   provider   String?
   providerId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  semesterRegistrations SemesterRegistration[]
+  taughtOfferings       CourseOffering[]       @relation("TeacherOfferings")
+  assignmentSubmissions AssignmentSubmission[]
+  assessmentAttempts    AssessmentAttempt[]
+
   @@unique([provider, providerId])
   @@map("users")
+}
+
+model AcademicYear {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique // e.g. "2026-2027"
+  startDate DateTime
+  endDate   DateTime
+
+  semesters Semester[]
+
+  @@map("academic_years")
+}
+
+model Semester {
+  id             Int      @id @default(autoincrement())
+  academicYearId Int
+  name           String // e.g. "Fall 2026"
+  term           String // e.g. "FALL", "SPRING", "SUMMER"
+  startDate      DateTime
+  endDate        DateTime
+
+  academicYear AcademicYear     @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  offerings    CourseOffering[]
+
+  @@unique([academicYearId, name])
+  @@map("semesters")
+}
+
+model Course {
+  id          Int    @id @default(autoincrement())
+  code        String @unique
+  name        String
+  description String
+  department  String
+  category    String // "core" | "elective" | "gen-ed"
+  level       String // "100" | "200" | "300" | "400"
+  credits     Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerings CourseOffering[]
+
+  // Prerequisite self-relation
+  prerequisitesFor CoursePrerequisite[] @relation("CourseToPrerequisite")
+  prerequisites    CoursePrerequisite[] @relation("PrerequisiteToCourse")
+
+  @@map("courses")
+}
+
+model CoursePrerequisite {
+  id             Int @id @default(autoincrement())
+  courseId       Int
+  prerequisiteId Int
+
+  course       Course @relation("CourseToPrerequisite", fields: [courseId], references: [id], onDelete: Cascade)
+  prerequisite Course @relation("PrerequisiteToCourse", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, prerequisiteId])
+  @@map("course_prerequisites")
+}
+
+model CourseOffering {
+  id         Int  @id @default(autoincrement())
+  courseId   Int
+  semesterId Int
+  teacherId  Int?
+
+  scheduleDays String[] // e.g. ["Mon", "Wed"]
+  startTime    String // "09:00"
+  endTime      String // "10:15"
+  room         String
+  seatsTotal   Int
+  seatsTaken   Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  semester Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  teacher  User?    @relation("TeacherOfferings", fields: [teacherId], references: [id])
+
+  enrollments      Enrollment[]
+  assignments      Assignment[]
+  assessments      Assessment[]
+  classSessions    ClassSession[]
+  assessmentPolicy AssessmentPolicy?
+  gradingScheme    GradingScheme?
+
+  @@unique([courseId, semesterId])
+  @@index([teacherId])
+  @@map("course_offerings")
+}
+
+model SemesterRegistration {
+  id         Int @id @default(autoincrement())
+  studentId  Int
+  semesterId Int
+
+  maxCredits   Int      @default(18)
+  status       String   @default("active") // active, dropped
+  registeredAt DateTime @default(now())
+
+  student        User            @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  semesterResult SemesterResult?
+
+  enrollments Enrollment[]
+
+  @@unique([studentId, semesterId])
+  @@map("semester_registrations")
+}
+
+model Enrollment {
+  id                     Int @id @default(autoincrement())
+  semesterRegistrationId Int
+  courseOfferingId       Int
+
+  status       String   @default("in-progress") // "in-progress" | "completed" | "dropped"
+  registeredAt DateTime @default(now())
+
+  semesterRegistration SemesterRegistration @relation(fields: [semesterRegistrationId], references: [id], onDelete: Cascade)
+  courseOffering       CourseOffering       @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+
+  attendanceRecords AttendanceRecord[]
+  finalResult       FinalCourseResult?
+
+  @@unique([semesterRegistrationId, courseOfferingId])
+  @@map("enrollments")
+}
+
+model AssessmentPolicy {
+  id               Int @id @default(autoincrement())
+  courseOfferingId Int @unique
+
+  minQuizzes     Int @default(0)
+  minAssignments Int @default(0)
+  minMidterms    Int @default(0)
+  minFinals      Int @default(0)
+  minProjects    Int @default(0)
+
+  courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+
+  @@map("assessment_policies")
+}
+
+enum GradingMode {
+  ABSOLUTE
+  RELATIVE
+}
+
+model GradingScheme {
+  id               Int @id @default(autoincrement())
+  courseOfferingId Int @unique
+
+  gradingMode      GradingMode @default(ABSOLUTE)
+  assignmentWeight Float       @default(0)
+  quizWeight       Float       @default(0)
+  midtermWeight    Float       @default(0)
+  finalWeight      Float       @default(0)
+  projectWeight    Float       @default(0)
+
+  courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+
+  @@map("grading_schemes")
+}
+
+model ClassSession {
+  id               Int      @id @default(autoincrement())
+  courseOfferingId Int
+  date             DateTime
+  topic            String?
+
+  courseOffering    CourseOffering     @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+  attendanceRecords AttendanceRecord[]
+
+  @@map("class_sessions")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model AttendanceRecord {
+  id             Int              @id @default(autoincrement())
+  enrollmentId   Int
+  classSessionId Int
+  status         AttendanceStatus @default(PRESENT)
+  notes          String?
+
+  enrollment   Enrollment   @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  classSession ClassSession @relation(fields: [classSessionId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, classSessionId])
+  @@map("attendance_records")
+}
+
+model FinalCourseResult {
+  id           Int @id @default(autoincrement())
+  enrollmentId Int @unique
+
+  percentage        Float?
+  letterGrade       String?
+  gradePoints       Float?
+  isShortAttendance Boolean @default(false)
+
+  calculatedAt DateTime @default(now())
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@map("final_course_results")
+}
+
+model SemesterResult {
+  id                     Int @id @default(autoincrement())
+  semesterRegistrationId Int @unique
+
+  gpa           Float?
+  creditsEarned Int    @default(0)
+
+  calculatedAt DateTime @default(now())
+
+  semesterRegistration SemesterRegistration @relation(fields: [semesterRegistrationId], references: [id], onDelete: Cascade)
+
+  @@map("semester_results")
+}
+
+// ---- Assignments ----
+
+enum AssignmentType {
+  HOMEWORK
+  PROJECT
+  QUIZ
+  REPORT
+  ESSAY
+}
+
+enum SubmissionType {
+  FILE
+  TEXT
+  LINK
+}
+
+enum SubmissionState {
+  SUBMITTED
+  LATE
+  GRADED
+}
+
+model Assignment {
+  id               Int            @id @default(autoincrement())
+  courseOfferingId Int
+  title            String
+  description      String
+  instructions     String?
+  type             AssignmentType
+  points           Int
+  dueDate          DateTime
+
+  submissionType   SubmissionType
+  allowLateSubmit  Boolean        @default(false)
+  allowedFileTypes String[]       @default([])
+  maxFileSizeMb    Int            @default(25)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  courseOffering CourseOffering         @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+  attachments    AssignmentAttachment[]
+  submissions    AssignmentSubmission[]
+
+  @@index([courseOfferingId])
+  @@index([dueDate])
+  @@index([type])
+  @@map("assignments")
+}
+
+model AssignmentAttachment {
+  id           Int      @id @default(autoincrement())
+  assignmentId Int
+  fileName     String
+  storageKey   String
+  fileType     String
+  fileSize     Int
+  createdAt    DateTime @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@index([assignmentId])
+  @@map("assignment_attachments")
+}
+
+model AssignmentSubmission {
+  id           Int @id @default(autoincrement())
+  assignmentId Int
+  studentId    Int
+
+  state       SubmissionState @default(SUBMITTED)
+  submittedAt DateTime        @default(now())
+  isLate      Boolean         @default(false)
+
+  textContent String?
+  linkUrl     String?
+  fileName    String?
+  storageKey  String?
+  fileType    String?
+  fileSize    Int?
+  comments    String?
+
+  grade    Int?
+  gradedAt DateTime?
+  feedback String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, studentId])
+  @@index([studentId])
+  @@index([submittedAt])
+  @@map("assignment_submissions")
+}
+
+// ---- Exams & Quizzes ----
+
+enum AssessmentType {
+  EXAM
+  QUIZ
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  AUTO_SUBMITTED
+}
+
+model Assessment {
+  id               Int            @id @default(autoincrement())
+  courseOfferingId Int
+  title            String
+  description      String
+  type             AssessmentType
+
+  startTime       DateTime
+  endTime         DateTime
+  durationMinutes Int
+
+  totalMarks      Int
+  passingMarks    Int
+  attemptsAllowed Int     @default(1)
+  reviewAllowed   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  courseOffering CourseOffering       @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+  questions      AssessmentQuestion[]
+  attempts       AssessmentAttempt[]
+
+  @@index([courseOfferingId])
+  @@index([type])
+  @@index([startTime])
+  @@index([endTime])
+  @@map("assessments")
+}
+
+model AssessmentQuestion {
+  id           Int          @id @default(autoincrement())
+  assessmentId Int
+  questionText String
+  questionType QuestionType
+  marks        Int
+  order        Int
+
+  options Json?
+
+  correctAnswer String
+  explanation   String?
+
+  assessment Assessment         @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  answers    AssessmentAnswer[]
+
+  @@index([assessmentId])
+  @@index([assessmentId, order])
+  @@map("assessment_questions")
+}
+
+model AssessmentAttempt {
+  id            Int @id @default(autoincrement())
+  assessmentId  Int
+  studentId     Int
+  attemptNumber Int
+
+  startedAt   DateTime      @default(now())
+  submittedAt DateTime?
+  expiresAt   DateTime
+  status      AttemptStatus @default(IN_PROGRESS)
+
+  score      Int?
+  percentage Float?
+  passed     Boolean?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assessment Assessment         @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  student    User               @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers    AssessmentAnswer[]
+
+  @@unique([assessmentId, studentId, attemptNumber])
+  @@index([studentId])
+  @@index([assessmentId])
+  @@index([studentId, assessmentId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("assessment_attempts")
+}
+
+model AssessmentAnswer {
+  id         Int @id @default(autoincrement())
+  attemptId  Int
+  questionId Int
+
+  answer String
+
+  isCorrect    Boolean?
+  marksAwarded Int?
+
+  answeredAt DateTime @updatedAt
+
+  attempt  AssessmentAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@index([questionId])
+  @@map("assessment_answers")
 }

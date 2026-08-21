@@ -1,5 +1,4 @@
 import type { Course, RegistrationConflict } from "./types";
-import { alreadyRegisteredCodes, completedCourseCodes } from "./mockCourses";
 
 export const MIN_CREDITS = 3;
 export const MAX_CREDITS = 18;
@@ -26,7 +25,23 @@ function overlappingDayLabel(a: Course, b: Course): string {
   return shared ?? "";
 }
 
-export function detectConflicts(selected: Course[]): RegistrationConflict[] {
+/**
+ * Client-side conflict detection — used ONLY for instant UI feedback before
+ * hitting the API. The backend re-validates all of this (credit limits,
+ * schedule conflicts, prerequisites, duplicates, seat availability) and is
+ * the actual source of truth; this must never be trusted as enforcement.
+ *
+ * @param selected the courses currently selected for registration
+ * @param registeredCodes course codes the student is already enrolled in
+ *   (any non-dropped status) — derive from the courses slice's myEnrollments
+ * @param completedCodes course codes the student has already completed —
+ *   derive from myEnrollments where status === "completed"
+ */
+export function detectConflicts(
+  selected: Course[],
+  registeredCodes: string[],
+  completedCodes: string[]
+): RegistrationConflict[] {
   const conflicts: RegistrationConflict[] = [];
 
   // Schedule overlaps — pairwise check.
@@ -58,7 +73,7 @@ export function detectConflicts(selected: Course[]): RegistrationConflict[] {
   // Missing prerequisites.
   for (const c of selected) {
     const missing = c.prerequisites.filter(
-      (p) => !completedCourseCodes.includes(p) && !selected.some((s) => s.code === p)
+      (p) => !completedCodes.includes(p) && !selected.some((s) => s.code === p)
     );
     if (missing.length > 0) {
       conflicts.push({
@@ -71,7 +86,7 @@ export function detectConflicts(selected: Course[]): RegistrationConflict[] {
 
   // Already registered.
   for (const c of selected) {
-    if (alreadyRegisteredCodes.includes(c.code)) {
+    if (registeredCodes.includes(c.code)) {
       conflicts.push({
         type: "already-registered",
         message: `You're already registered for ${c.code}.`,

@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
-import { departments } from "./mockCourses";
 import { cx } from "./token";
 import type { RegistrationFilters } from "./types";
 
 interface CourseFiltersProps {
   filters: RegistrationFilters;
   onChange: (filters: RegistrationFilters) => void;
+  departments: string[];
 }
 
 const levels = ["100", "200", "300", "400"];
@@ -69,7 +69,7 @@ function FilterDropdown({
   );
 }
 
-export function CourseFilters({ filters, onChange }: CourseFiltersProps) {
+export function CourseFilters({ filters, onChange, departments }: CourseFiltersProps) {
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
       <div

@@ -6,7 +6,7 @@ import { MAX_CREDITS, totalCreditsOf } from "./conflicts";
 
 interface RegistrationSummaryProps {
   selected: Course[];
-  onRemove: (id: string) => void;
+  onRemove: (id: number) => void;
   onClearAll: () => void;
 }
 

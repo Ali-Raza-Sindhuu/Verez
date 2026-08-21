@@ -5,8 +5,9 @@ import type { Course } from "./types";
 
 interface AvailableCourseListProps {
   courses: Course[];
-  selectedIds: Set<string>;
-  onToggle: (id: string) => void;
+  selectedIds: Set<number>;
+  registeredCodes: Set<string>;
+  onToggle: (id: number) => void;
   onViewDetails: (course: Course) => void;
   loading: boolean;
   hasAnySemesterCourses: boolean;
@@ -33,6 +34,7 @@ function CourseCardSkeleton() {
 export function AvailableCourseList({
   courses,
   selectedIds,
+  registeredCodes,
   onToggle,
   onViewDetails,
   loading,

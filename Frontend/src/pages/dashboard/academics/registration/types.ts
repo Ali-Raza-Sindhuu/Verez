@@ -9,7 +9,7 @@ export interface CourseSchedule {
 }
 
 export interface Course {
-  id: string;
+  id: number;
   code: string;
   name: string;
   description: string;
@@ -43,5 +43,5 @@ export type ConflictType =
 export interface RegistrationConflict {
   type: ConflictType;
   message: string;
-  courseIds: string[];
+  courseIds: number[];
 }

@@ -44,14 +44,14 @@ export function Navbar() {
           >
             Sign in
           </Link>
-          <Link
-            to="#"
+          <motion.a
+            href="#"
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.97 }}
             className="rounded-lg border border-black/10 bg-white px-4 py-[7px] text-[13.5px] font-medium text-[#14151A] shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-black/[0.02]"
           >
             Get demo
-          </Link>
+          </motion.a>
         </div>
 
         {/* mobile toggle */}

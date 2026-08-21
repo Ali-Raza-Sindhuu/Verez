@@ -17,7 +17,7 @@ export function useCountUp(target: number, durationMs = 1200) {
   useEffect(() => {
     const controls = animate(mv, target, {
       duration: durationMs / 1000,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
     });
     const unsub = mv.on("change", (v) => setDisplay(Math.round(v)));
     return () => {
@@ -36,7 +36,7 @@ export const fadeUp = {
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
   }),
 };
 

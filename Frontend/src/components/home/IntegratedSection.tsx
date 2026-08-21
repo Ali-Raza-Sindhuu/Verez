@@ -75,7 +75,7 @@ export function IntegrationsSection() {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ delay: (i % 7) * 0.05, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ delay: (i % 7) * 0.05, duration: 0.45, ease: [0.16, 1, 0.3, 1] as const }}
                 whileHover={{ y: -4, scale: 1.04 }}
                 className="flex aspect-square items-center justify-center rounded-2xl border border-black/[0.06] bg-white shadow-sm"
               >

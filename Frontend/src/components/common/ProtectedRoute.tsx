@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 import { selectAuthStatus } from "@/store/features/auth/authSlice";
-import LoadingScreen from "./LoadingScreen";
+
 
 // Wrap protected route groups with this. Shows a loading screen while the
 // initial bootstrapAuth() call is in flight, so we don't flash a redirect
@@ -12,7 +12,7 @@ export default function ProtectedRoute() {
   const location = useLocation();
 
   if (status === "idle" || status === "loading") {
-    return <LoadingScreen />;
+    return null;
   }
 
   if (status !== "authenticated") {

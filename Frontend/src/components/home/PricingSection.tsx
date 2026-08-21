@@ -62,7 +62,7 @@ function PricingCard({ plan, delay = 0 }: { plan: Plan; delay?: number }) {
         initial={{ opacity: 0, y: 24, scale: 0.97 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] as const }}
         whileHover={{ y: -6 }}
         className="relative flex flex-col rounded-3xl bg-gradient-to-b from-[#3D6DF2] to-[#3d5eef] p-6 text-white shadow-xl shadow-[#3D6DF2]/25 sm:-translate-y-4"
       >
@@ -109,7 +109,7 @@ function PricingCard({ plan, delay = 0 }: { plan: Plan; delay?: number }) {
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] as const }}
       whileHover={{ y: -4 }}
       className="flex flex-col rounded-3xl border border-black/[0.06] bg-white/60 p-6"
     >

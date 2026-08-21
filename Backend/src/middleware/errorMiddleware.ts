@@ -2,6 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import { Prisma } from "../generated/prisma/client.js";
 import { ZodError } from "zod";
 import { AuthError } from "../modules/auth/authService.js";
+import { CourseError } from "../modules/courses/courseService.js";
+import { AssignmentError } from "../modules/assignments/assignmentService.js";
+import { TeacherError } from "../modules/teacher/teacherService.js";
+import { AssessmentError } from "../modules/assessments/assessmentService.js";
+import { GradeError } from "../modules/grades/gradeService.js";
 
 export const errorMiddleware = (
   error: unknown,
@@ -9,9 +14,24 @@ export const errorMiddleware = (
   res: Response,
   _next: NextFunction
 ) => {
-  if (error instanceof AuthError) {
-    // Expected client-side auth failures (no cookie yet, expired token,
-    // wrong password, etc.) — not server bugs, don't spam the logs.
+  if (error instanceof AssignmentError || error instanceof AssessmentError) {
+    res.status(error.status).json({
+      success: false,
+      message: error.message,
+      code: error.code,
+    });
+
+    return;
+  }
+
+  if (
+    error instanceof AuthError ||
+    error instanceof CourseError ||
+    error instanceof TeacherError ||
+    error instanceof GradeError
+  ) {
+    // Expected client-side failures (validation, conflicts, no seats left,
+    // etc.) — not server bugs, don't spam the logs.
     res.status(error.status).json({
       success: false,
       message: error.message,

@@ -2,21 +2,20 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, User, Building2, Layers, BookMarked, Clock, MapPin, Users, Check, Plus } from "lucide-react";
 import type { Course } from "./types";
 import { cx, categoryLabel, categoryChipClass } from "./token";
-import { alreadyRegisteredCodes } from "./mockCourses";
 
 interface CourseDetailsProps {
   course: Course | null;
   selected: boolean;
+  isRegistered: boolean;
   onClose: () => void;
   onToggle: () => void;
 }
 
-export function CourseDetails({ course, selected, onClose, onToggle }: CourseDetailsProps) {
+export function CourseDetails({ course, selected, isRegistered, onClose, onToggle }: CourseDetailsProps) {
   if (!course) return null;
 
   const seatsLeft = course.seatsTotal - course.seatsTaken;
   const isFull = seatsLeft <= 0;
-  const isRegistered = alreadyRegisteredCodes.includes(course.code);
 
   const facts = [
     { icon: User, label: "Instructor", value: course.instructor },

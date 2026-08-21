@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 
-export type UserRole = "STUDENT" | "TEACHER";
+export type UserRole = "STUDENT" | "TEACHER" | "ADMIN";
 
 export interface TokenPayload {
   userId: number;

@@ -18,7 +18,7 @@ export const departments = [
 
 export const mockCourses: Course[] = [
   {
-    id: "crs-1",
+    id: 1,
     code: "CS-301",
     name: "Database Systems",
     description:
@@ -34,7 +34,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-101"],
   },
   {
-    id: "crs-2",
+    id: 2,
     code: "CS-302",
     name: "Web Engineering",
     description:
@@ -50,7 +50,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-101"],
   },
   {
-    id: "crs-3",
+    id: 3,
     code: "CS-305",
     name: "Artificial Intelligence",
     description:
@@ -66,7 +66,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-101", "MATH-201"],
   },
   {
-    id: "crs-4",
+    id: 4,
     code: "CS-307",
     name: "Software Engineering",
     description:
@@ -82,7 +82,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-101"],
   },
   {
-    id: "crs-5",
+    id: 5,
     code: "MATH-201",
     name: "Discrete Mathematics",
     description: "Logic, set theory, combinatorics, graph theory, and proof techniques for computer science.",
@@ -97,7 +97,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["MATH-101"],
   },
   {
-    id: "crs-6",
+    id: 6,
     code: "MATH-210",
     name: "Linear Algebra",
     description: "Vector spaces, matrices, eigenvalues, and linear transformations with applications.",
@@ -112,7 +112,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["MATH-101"],
   },
   {
-    id: "crs-7",
+    id: 7,
     code: "ENG-101",
     name: "Technical Communication",
     description: "Writing clear technical documentation, reports, and presentations for engineering audiences.",
@@ -127,7 +127,7 @@ export const mockCourses: Course[] = [
     prerequisites: [],
   },
   {
-    id: "crs-8",
+    id: 8,
     code: "ENG-205",
     name: "Technical Writing",
     description: "Advanced technical writing for software documentation, proposals, and research papers.",
@@ -142,7 +142,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["ENG-101"],
   },
   {
-    id: "crs-9",
+    id: 9,
     code: "CS-322",
     name: "Operating Systems Lab",
     description: "Hands-on lab covering process scheduling, memory management, and concurrency primitives.",
@@ -157,7 +157,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-101"],
   },
   {
-    id: "crs-10",
+    id: 10,
     code: "CS-410",
     name: "Machine Learning",
     description: "Supervised and unsupervised learning, neural networks, and applied model evaluation.",
@@ -172,7 +172,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-305"],
   },
   {
-    id: "crs-11",
+    id: 11,
     code: "SE-320",
     name: "Cloud & Distributed Systems",
     description: "Distributed systems fundamentals, cloud architecture patterns, and scalability trade-offs.",
@@ -187,7 +187,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-301"],
   },
   {
-    id: "crs-12",
+    id: 12,
     code: "GE-150",
     name: "Ethics in Technology",
     description: "Philosophical and practical exploration of ethical issues in computing and AI.",
@@ -202,7 +202,7 @@ export const mockCourses: Course[] = [
     prerequisites: [],
   },
   {
-    id: "crs-13",
+    id: 13,
     code: "MATH-301",
     name: "Probability & Statistics",
     description: "Probability theory, distributions, statistical inference, and hypothesis testing.",
@@ -217,7 +217,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["MATH-201"],
   },
   {
-    id: "crs-14",
+    id: 14,
     code: "SE-410",
     name: "DevOps & CI/CD",
     description: "Continuous integration, deployment pipelines, containerization, and infrastructure as code.",
@@ -232,7 +232,7 @@ export const mockCourses: Course[] = [
     prerequisites: ["CS-307"],
   },
   {
-    id: "crs-15",
+    id: 15,
     code: "GE-200",
     name: "Entrepreneurship Fundamentals",
     description: "Startup fundamentals — ideation, business models, funding, and go-to-market strategy.",

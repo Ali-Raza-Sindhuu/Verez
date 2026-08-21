@@ -434,9 +434,9 @@ const MOCK_QUIZZES: Assessment[] = [
 
 const statusMeta: Record<AssessmentStatus, { label: string; badge: string; icon: typeof CircleDot }> = {
   upcoming: { label: "Upcoming", badge: "bg-blue-500/10 text-blue-300 border-blue-500/20", icon: Calendar },
-  ongoing: { label: "Ongoing", badge: "bg-teal/10 text-teal border-teal/20", icon: CircleDot },
-  completed: { label: "Completed", badge: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20", icon: CheckCircle2 },
-  missed: { label: "Missed", badge: "bg-red-500/10 text-red-400 border-red-500/20", icon: XCircle },
+  ongoing: { label: "Ongoing", badge: "bg-[var(--color-accent-primary)]/10 text-[var(--color-accent-primary)] border-[var(--color-accent-primary)]/20", icon: CircleDot },
+  completed: { label: "Completed", badge: "bg-[var(--color-accent-success)]/10 text-[var(--color-accent-success)] border-[var(--color-accent-success)]/20", icon: CheckCircle2 },
+  missed: { label: "Missed", badge: "bg-[var(--color-accent-danger)]/10 text-[var(--color-accent-danger)] border-[var(--color-accent-danger)]/20", icon: XCircle },
 };
 
 function formatClock(totalSeconds: number) {
@@ -463,40 +463,40 @@ function StatCard({
   icon: typeof Calendar;
 }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
+    <div className="rounded-2xl border border-[var(--color-border-hairline)] bg-[var(--color-surface)] p-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-slate-text">{label}</span>
-        <span className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-teal shrink-0">
+        <span className="text-xs text-[var(--color-text-secondary)]">{label}</span>
+        <span className="w-7 h-7 rounded-lg bg-[var(--color-surface-alt)] flex items-center justify-center text-[var(--color-accent-primary)] shrink-0">
           <Icon className="w-3.5 h-3.5" />
         </span>
       </div>
-      <div className="text-xl font-display font-semibold text-cream">{value}</div>
-      <div className="text-xs text-slate-text mt-0.5 truncate">{sub}</div>
+      <div className="text-xl font-display font-semibold text-[var(--color-text-primary)]">{value}</div>
+      <div className="text-xs text-[var(--color-text-secondary)] mt-0.5 truncate">{sub}</div>
     </div>
   );
 }
 
 function StatSkeleton() {
   return (
-    <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4 animate-pulse">
-      <div className="h-3 w-16 bg-white/8 rounded mb-3" />
-      <div className="h-6 w-10 bg-white/8 rounded mb-2" />
-      <div className="h-2.5 w-20 bg-white/8 rounded" />
+    <div className="rounded-2xl border border-[var(--color-border-hairline)] bg-[var(--color-surface)] p-4 animate-pulse">
+      <div className="h-3 w-16 bg-[var(--color-surface-alt)] rounded mb-3" />
+      <div className="h-6 w-10 bg-[var(--color-surface-alt)] rounded mb-2" />
+      <div className="h-2.5 w-20 bg-[var(--color-surface-alt)] rounded" />
     </div>
   );
 }
 
 function CardSkeleton() {
   return (
-    <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4 sm:p-5 animate-pulse">
+    <div className="rounded-2xl border border-[var(--color-border-hairline)] bg-[var(--color-surface)] p-4 sm:p-5 animate-pulse">
       <div className="flex items-start gap-3">
-        <div className="w-1 self-stretch rounded-full bg-white/8" />
+        <div className="w-1 self-stretch rounded-full bg-[var(--color-surface-alt)]" />
         <div className="min-w-0 flex-1 space-y-3">
-          <div className="h-3 w-24 bg-white/8 rounded" />
-          <div className="h-4 w-48 bg-white/8 rounded" />
-          <div className="h-3 w-64 bg-white/8 rounded" />
+          <div className="h-3 w-24 bg-[var(--color-surface-alt)] rounded" />
+          <div className="h-4 w-48 bg-[var(--color-surface-alt)] rounded" />
+          <div className="h-3 w-64 bg-[var(--color-surface-alt)] rounded" />
         </div>
-        <div className="h-8 w-24 bg-white/8 rounded-full shrink-0" />
+        <div className="h-8 w-24 bg-[var(--color-surface-alt)] rounded-full shrink-0" />
       </div>
     </div>
   );
@@ -515,12 +515,12 @@ function StatusBadge({ status }: { status: AssessmentStatus }) {
 
 function EmptyState({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div className="rounded-2xl border border-white/8 py-16 px-6 text-center">
-      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3 text-slate-text">
+    <div className="rounded-2xl border border-[var(--color-border-hairline)] py-16 px-6 text-center">
+      <div className="w-12 h-12 rounded-full bg-[var(--color-surface-alt)] flex items-center justify-center mx-auto mb-3 text-[var(--color-text-secondary)]">
         <BookOpenCheck className="w-5 h-5" />
       </div>
-      <div className="text-sm text-cream font-medium">{title}</div>
-      {subtitle && <div className="text-xs text-slate-text mt-1">{subtitle}</div>}
+      <div className="text-sm text-[var(--color-text-primary)] font-medium">{title}</div>
+      {subtitle && <div className="text-xs text-[var(--color-text-secondary)] mt-1">{subtitle}</div>}
     </div>
   );
 }
@@ -581,14 +581,14 @@ function FilterBar({
 
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
-      <div className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-full px-3.5 py-2 flex-1 max-w-sm">
-        <Search className="w-4 h-4 text-slate-text shrink-0" />
+      <div className="flex items-center gap-2 bg-[var(--color-surface-alt)] border border-[var(--color-border-hairline)] rounded-full px-3.5 py-2 flex-1 max-w-sm">
+        <Search className="w-4 h-4 text-[var(--color-text-secondary)] shrink-0" />
         <input
           type="text"
           value={query}
           onChange={(e) => onQuery(e.target.value)}
           placeholder={placeholder}
-          className="bg-transparent text-sm placeholder:text-slate-text focus:outline-none w-full"
+          className="bg-transparent text-sm placeholder:text-[var(--color-text-secondary)] focus:outline-none w-full"
         />
       </div>
 
@@ -596,13 +596,13 @@ function FilterBar({
         <div className="relative shrink-0" ref={courseRef}>
           <button
             onClick={() => setCourseOpen((o) => !o)}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-text hover:text-cream border border-white/10 rounded-full px-3.5 py-2 transition-colors max-w-[160px]"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-strong)] rounded-full px-3.5 py-2 transition-colors max-w-[160px]"
           >
             <span className="truncate">{course}</span>
             <ChevronDown className={`w-3 h-3 shrink-0 transition-transform ${courseOpen ? "rotate-180" : ""}`} />
           </button>
           {courseOpen && (
-            <div className="absolute left-0 top-full mt-1.5 w-52 rounded-xl border border-white/8 bg-ink shadow-[0_20px_50px_rgba(0,0,0,.5)] py-1.5 z-30">
+            <div className="absolute left-0 top-full mt-1.5 w-52 rounded-xl border border-[var(--color-border-hairline)] bg-[var(--color-bg)] shadow-[0_20px_50px_rgba(0,0,0,.5)] py-1.5 z-30">
               {courses.map((c) => (
                 <button
                   key={c}
@@ -611,7 +611,7 @@ function FilterBar({
                     setCourseOpen(false);
                   }}
                   className={`w-full text-left px-3 py-2 text-sm truncate transition-colors ${
-                    c === course ? "text-teal" : "text-slate-text hover:text-cream hover:bg-white/5"
+                    c === course ? "text-[var(--color-accent-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)]"
                   }`}
                 >
                   {c}
@@ -624,13 +624,13 @@ function FilterBar({
         <div className="relative shrink-0" ref={statusRef}>
           <button
             onClick={() => setStatusOpen((o) => !o)}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-text hover:text-cream border border-white/10 rounded-full px-3.5 py-2 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-strong)] rounded-full px-3.5 py-2 transition-colors"
           >
             {statusOptions.find((s) => s.value === status)?.label}
             <ChevronDown className={`w-3 h-3 transition-transform ${statusOpen ? "rotate-180" : ""}`} />
           </button>
           {statusOpen && (
-            <div className="absolute left-0 top-full mt-1.5 w-44 rounded-xl border border-white/8 bg-ink shadow-[0_20px_50px_rgba(0,0,0,.5)] py-1.5 z-30">
+            <div className="absolute left-0 top-full mt-1.5 w-44 rounded-xl border border-[var(--color-border-hairline)] bg-[var(--color-bg)] shadow-[0_20px_50px_rgba(0,0,0,.5)] py-1.5 z-30">
               {statusOptions.map((s) => (
                 <button
                   key={s.value}
@@ -639,7 +639,7 @@ function FilterBar({
                     setStatusOpen(false);
                   }}
                   className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                    s.value === status ? "text-teal" : "text-slate-text hover:text-cream hover:bg-white/5"
+                    s.value === status ? "text-[var(--color-accent-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)]"
                   }`}
                 >
                   {s.label}
@@ -652,13 +652,13 @@ function FilterBar({
         <div className="relative shrink-0" ref={sortRef}>
           <button
             onClick={() => setSortOpen((o) => !o)}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-text hover:text-cream border border-white/10 rounded-full px-3.5 py-2 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-strong)] rounded-full px-3.5 py-2 transition-colors"
           >
             Sort · {sortLabels[sortKey]}
             <ChevronDown className={`w-3 h-3 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
           </button>
           {sortOpen && (
-            <div className="absolute left-0 top-full mt-1.5 w-36 rounded-xl border border-white/8 bg-ink shadow-[0_20px_50px_rgba(0,0,0,.5)] py-1.5 z-30">
+            <div className="absolute left-0 top-full mt-1.5 w-36 rounded-xl border border-[var(--color-border-hairline)] bg-[var(--color-bg)] shadow-[0_20px_50px_rgba(0,0,0,.5)] py-1.5 z-30">
               {(Object.keys(sortLabels) as SortKey[]).map((k) => (
                 <button
                   key={k}
@@ -667,7 +667,7 @@ function FilterBar({
                     setSortOpen(false);
                   }}
                   className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                    k === sortKey ? "text-teal" : "text-slate-text hover:text-cream hover:bg-white/5"
+                    k === sortKey ? "text-[var(--color-accent-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)]"
                   }`}
                 >
                   {sortLabels[k]}
@@ -678,17 +678,17 @@ function FilterBar({
         </div>
       </div>
 
-      <div className="hidden sm:flex items-center gap-1 md:ml-auto border border-white/10 rounded-full p-1 shrink-0">
+      <div className="hidden sm:flex items-center gap-1 md:ml-auto border border-[var(--color-border-strong)] rounded-full p-1 shrink-0">
         <button
           onClick={() => onView("list")}
-          className={`p-1.5 rounded-full transition-colors ${view === "list" ? "bg-white/10 text-cream" : "text-slate-text hover:text-cream"}`}
+          className={`p-1.5 rounded-full transition-colors ${view === "list" ? "bg-[var(--color-surface-alt)] text-[var(--color-text-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"}`}
           aria-label="List view"
         >
           <ListIcon className="w-3.5 h-3.5" />
         </button>
         <button
           onClick={() => onView("grid")}
-          className={`p-1.5 rounded-full transition-colors ${view === "grid" ? "bg-white/10 text-cream" : "text-slate-text hover:text-cream"}`}
+          className={`p-1.5 rounded-full transition-colors ${view === "grid" ? "bg-[var(--color-surface-alt)] text-[var(--color-text-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"}`}
           aria-label="Grid view"
         >
           <LayoutGrid className="w-3.5 h-3.5" />
@@ -731,7 +731,7 @@ function AssessmentCard({
   return (
     <button
       onClick={() => onSelect(item)}
-      className={`text-left w-full rounded-2xl border border-white/8 bg-white/[0.02] hover:border-white/15 transition-colors p-4 sm:p-5 ${
+      className={`text-left w-full rounded-2xl border border-[var(--color-border-hairline)] bg-[var(--color-surface)] hover:border-[var(--color-border-strong)] transition-colors p-4 sm:p-5 ${
         view === "grid" ? "h-full flex flex-col" : ""
       }`}
     >
@@ -740,15 +740,15 @@ function AssessmentCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3 mb-1.5">
             <div className="min-w-0">
-              <div className="text-xs text-slate-text">
+              <div className="text-xs text-[var(--color-text-secondary)]">
                 {item.courseCode} · {item.courseName}
               </div>
-              <h3 className="text-sm font-medium text-cream mt-0.5 truncate">{item.title}</h3>
+              <h3 className="text-sm font-medium text-[var(--color-text-primary)] mt-0.5 truncate">{item.title}</h3>
             </div>
             <StatusBadge status={item.status} />
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-text mb-3">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-text-secondary)] mb-3">
             <span className="inline-flex items-center gap-1">
               {item.type === "exam" ? <GraduationCap className="w-3 h-3" /> : <HelpCircle className="w-3 h-3" />}
               {item.kind} · {item.type === "exam" ? `${item.totalMarks} Marks` : `${item.questionsCount} Questions`}
@@ -762,7 +762,7 @@ function AssessmentCard({
               {item.time} · {item.durationMinutes >= 60 ? `${Math.round(item.durationMinutes / 60)} Hours` : `${item.durationMinutes} Minutes`}
             </span>
             {item.dueLabel && item.status === "upcoming" && (
-              <span className="text-teal">{item.dueLabel}</span>
+              <span className="text-[var(--color-accent-primary)]">{item.dueLabel}</span>
             )}
             {item.type === "quiz" && (
               <span>
@@ -772,7 +772,7 @@ function AssessmentCard({
           </div>
 
           {item.status === "completed" && item.scoreEarned !== undefined && (
-            <div className="text-xs font-medium text-teal mb-3">
+            <div className="text-xs font-medium text-[var(--color-accent-primary)] mb-3">
               Score: {item.scoreCorrect}/{item.questionsCount} ({item.scoreEarned}%)
             </div>
           )}
@@ -781,8 +781,8 @@ function AssessmentCard({
             <span
               className={`inline-flex items-center gap-1 text-xs font-medium px-3.5 py-1.5 rounded-full transition-colors ${
                 item.status === "missed"
-                  ? "bg-white/5 text-slate-text"
-                  : "bg-teal/10 text-teal border border-teal/20 hover:bg-teal/15"
+                  ? "bg-[var(--color-surface-alt)] text-[var(--color-text-secondary)]"
+                  : "bg-[var(--color-accent-primary)]/10 text-[var(--color-accent-primary)] border border-[var(--color-accent-primary)]/20 hover:bg-[var(--color-accent-primary)]/15"
               }`}
               onClick={(e) => {
                 e.stopPropagation();
@@ -859,17 +859,17 @@ function DetailsPanel({
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", damping: 32, stiffness: 300 }}
-        className="fixed lg:sticky top-0 right-0 z-50 lg:z-0 h-full lg:h-auto w-full sm:w-[400px] lg:w-[360px] shrink-0 bg-ink lg:bg-transparent border-l border-white/8 lg:border-l-0 overflow-y-auto"
+        className="fixed lg:sticky top-0 right-0 z-50 lg:z-0 h-full lg:h-auto w-full sm:w-[400px] lg:w-[360px] shrink-0 bg-[var(--color-bg)] lg:bg-transparent border-l border-[var(--color-border-hairline)] lg:border-l-0 overflow-y-auto"
       >
-        <div className="lg:rounded-2xl lg:border lg:border-white/8 lg:bg-white/[0.02] p-5 h-full lg:h-auto">
+        <div className="lg:rounded-2xl lg:border lg:border-[var(--color-border-hairline)] lg:bg-[var(--color-surface)] p-5 h-full lg:h-auto">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="text-base font-display font-semibold text-cream">{item.title}</h3>
-              <div className="text-xs text-slate-text mt-0.5">
+              <h3 className="text-base font-display font-semibold text-[var(--color-text-primary)]">{item.title}</h3>
+              <div className="text-xs text-[var(--color-text-secondary)] mt-0.5">
                 {item.courseCode} · {item.courseName}
               </div>
             </div>
-            <button onClick={onClose} className="p-1 text-slate-text hover:text-cream transition-colors">
+            <button onClick={onClose} className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -879,11 +879,11 @@ function DetailsPanel({
           </div>
 
           {item.type === "quiz" && (
-            <div className="flex items-center gap-1 border border-white/10 rounded-full p-1 mb-4 w-fit">
+            <div className="flex items-center gap-1 border border-[var(--color-border-strong)] rounded-full p-1 mb-4 w-fit">
               <button
                 onClick={() => setTab("details")}
                 className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                  tab === "details" ? "bg-white/10 text-cream" : "text-slate-text hover:text-cream"
+                  tab === "details" ? "bg-[var(--color-surface-alt)] text-[var(--color-text-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 Details
@@ -891,7 +891,7 @@ function DetailsPanel({
               <button
                 onClick={() => setTab("leaderboard")}
                 className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                  tab === "leaderboard" ? "bg-white/10 text-cream" : "text-slate-text hover:text-cream"
+                  tab === "leaderboard" ? "bg-[var(--color-surface-alt)] text-[var(--color-text-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 Leaderboard
@@ -903,21 +903,21 @@ function DetailsPanel({
             <>
               <div className="grid grid-cols-2 gap-3 mb-5">
                 {rows.map((r) => (
-                  <div key={r.label} className="rounded-xl border border-white/8 p-3">
-                    <div className="text-[10px] text-slate-text uppercase tracking-wide mb-1">{r.label}</div>
-                    <div className="text-sm text-cream">{r.value}</div>
+                  <div key={r.label} className="rounded-xl border border-[var(--color-border-hairline)] p-3">
+                    <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wide mb-1">{r.label}</div>
+                    <div className="text-sm text-[var(--color-text-primary)]">{r.value}</div>
                   </div>
                 ))}
               </div>
 
               {item.status === "completed" && item.scoreEarned !== undefined && (
-                <div className="rounded-xl border border-teal/20 bg-teal/[0.04] p-4 mb-5">
+                <div className="rounded-xl border border-[var(--color-accent-primary)]/20 bg-[var(--color-accent-primary)]/[0.04] p-4 mb-5">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-teal text-sm font-medium">
+                    <div className="flex items-center gap-2 text-[var(--color-accent-primary)] text-sm font-medium">
                       <Award className="w-4 h-4" />
                       Score: {item.scoreEarned}%
                     </div>
-                    <span className="text-xs text-slate-text">
+                    <span className="text-xs text-[var(--color-text-secondary)]">
                       {item.scoreCorrect} correct · {item.scoreIncorrect} incorrect
                     </span>
                   </div>
@@ -925,8 +925,8 @@ function DetailsPanel({
               )}
 
               <div className="mb-6">
-                <div className="text-xs font-medium text-cream mb-2">Exam Instructions</div>
-                <ul className="space-y-1.5 text-xs text-slate-text">
+                <div className="text-xs font-medium text-[var(--color-text-primary)] mb-2">Exam Instructions</div>
+                <ul className="space-y-1.5 text-xs text-[var(--color-text-secondary)]">
                   <li>• Read every question carefully.</li>
                   <li>• Do not refresh the page during the exam.</li>
                   <li>• The exam will automatically submit when time expires.</li>
@@ -937,7 +937,7 @@ function DetailsPanel({
               {canStart && (
                 <button
                   onClick={() => onStart(item)}
-                  className="w-full inline-flex items-center justify-center gap-1.5 bg-teal text-ink text-sm font-medium px-4 py-2.5 rounded-full hover:bg-teal-glow transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-1.5 bg-[var(--color-accent-primary)] text-white text-sm font-medium px-4 py-2.5 rounded-full hover:opacity-90 transition-colors"
                 >
                   {primaryLabel}
                   <ArrowRight className="w-4 h-4" />
@@ -947,7 +947,7 @@ function DetailsPanel({
               {item.status === "completed" && (
                 <button
                   onClick={() => onStart(item)}
-                  className="w-full inline-flex items-center justify-center gap-1.5 bg-white/5 text-cream text-sm font-medium px-4 py-2.5 rounded-full hover:bg-white/10 transition-colors border border-white/10"
+                  className="w-full inline-flex items-center justify-center gap-1.5 bg-[var(--color-surface-alt)] text-[var(--color-text-primary)] text-sm font-medium px-4 py-2.5 rounded-full hover:bg-[var(--color-surface-alt)] transition-colors border border-[var(--color-border-strong)]"
                 >
                   View Result
                   <ArrowRight className="w-4 h-4" />
@@ -955,7 +955,7 @@ function DetailsPanel({
               )}
             </>
           ) : (
-            <div className="rounded-xl border border-white/8 p-6 text-center text-xs text-slate-text">
+            <div className="rounded-xl border border-[var(--color-border-hairline)] p-6 text-center text-xs text-[var(--color-text-secondary)]">
               Leaderboard not available for this quiz.
             </div>
           )}
@@ -976,10 +976,10 @@ function Timer({ seconds }: { seconds: number }) {
     <div
       className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 border font-mono text-sm tracking-wider ${
         critical
-          ? "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse"
+          ? "bg-[var(--color-accent-danger)]/10 border-[var(--color-accent-danger)]/30 text-[var(--color-accent-danger)] animate-pulse"
           : low
-          ? "bg-amber-500/10 border-amber-500/30 text-amber-300"
-          : "bg-white/5 border-white/10 text-cream"
+          ? "bg-[var(--color-accent-secondary)]/10 border-[var(--color-accent-secondary)]/30 text-[var(--color-accent-secondary)]"
+          : "bg-[var(--color-surface-alt)] border-[var(--color-border-strong)] text-[var(--color-text-primary)]"
       }`}
     >
       <TimerIcon className="w-3.5 h-3.5" />
@@ -1003,8 +1003,8 @@ function QuestionRenderer({
 }) {
   return (
     <div>
-      <div className="text-xs text-slate-text mb-2">Question {index + 1}</div>
-      <h3 className="text-base sm:text-lg text-cream font-medium mb-6 leading-relaxed">{question.prompt}</h3>
+      <div className="text-xs text-[var(--color-text-secondary)] mb-2">Question {index + 1}</div>
+      <h3 className="text-base sm:text-lg text-[var(--color-text-primary)] font-medium mb-6 leading-relaxed">{question.prompt}</h3>
 
       {question.type === "short-answer" ? (
         <input
@@ -1012,7 +1012,7 @@ function QuestionRenderer({
           value={answer ?? ""}
           onChange={(e) => onAnswer(e.target.value)}
           placeholder="Type your answer..."
-          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream placeholder:text-slate-text focus:outline-none focus:border-teal/40 disabled:opacity-50"
+          className="w-full bg-[var(--color-surface-alt)] border border-[var(--color-border-strong)] rounded-xl px-4 py-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:border-[var(--color-accent-primary)]/40 disabled:opacity-50"
         />
       ) : (
         <div className="space-y-2.5">
@@ -1025,16 +1025,16 @@ function QuestionRenderer({
                 onClick={() => onAnswer(opt)}
                 className={`w-full flex items-center gap-3 text-left rounded-xl border px-4 py-3 text-sm transition-colors disabled:opacity-50 ${
                   selected
-                    ? "border-teal/40 bg-teal/[0.06] text-cream"
-                    : "border-white/10 text-slate-text hover:border-white/20 hover:text-cream"
+                    ? "border-[var(--color-accent-primary)]/40 bg-[var(--color-accent-primary)]/[0.06] text-[var(--color-text-primary)]"
+                    : "border-[var(--color-border-strong)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <span
                   className={`w-4 h-4 rounded-full border shrink-0 flex items-center justify-center ${
-                    selected ? "border-teal" : "border-white/20"
+                    selected ? "border-[var(--color-accent-primary)]" : "border-[var(--color-border-strong)]"
                   }`}
                 >
-                  {selected && <span className="w-2 h-2 rounded-full bg-teal" />}
+                  {selected && <span className="w-2 h-2 rounded-full bg-[var(--color-accent-primary)]" />}
                 </span>
                 {opt}
               </button>
@@ -1069,10 +1069,10 @@ function QuestionNavigator({
               onClick={() => onJump(i)}
               className={`aspect-square rounded-lg text-xs font-medium transition-colors flex items-center justify-center ${
                 isCurrent
-                  ? "bg-teal text-ink"
+                  ? "bg-[var(--color-accent-primary)] text-white"
                   : answered
-                  ? "bg-teal/10 text-teal border border-teal/20"
-                  : "bg-white/5 text-slate-text border border-white/8 hover:border-white/20"
+                  ? "bg-[var(--color-accent-primary)]/10 text-[var(--color-accent-primary)] border border-[var(--color-accent-primary)]/20"
+                  : "bg-[var(--color-surface-alt)] text-[var(--color-text-secondary)] border border-[var(--color-border-hairline)] hover:border-[var(--color-border-strong)]"
               }`}
             >
               {i + 1}
@@ -1080,15 +1080,15 @@ function QuestionNavigator({
           );
         })}
       </div>
-      <div className="flex items-center gap-4 mt-4 text-[10px] text-slate-text">
+      <div className="flex items-center gap-4 mt-4 text-[10px] text-[var(--color-text-secondary)]">
         <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded bg-teal" /> Current
+          <span className="w-2.5 h-2.5 rounded bg-[var(--color-accent-primary)]" /> Current
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded bg-teal/20 border border-teal/30" /> Answered
+          <span className="w-2.5 h-2.5 rounded bg-[var(--color-accent-primary)]/20 border border-[var(--color-accent-primary)]/30" /> Answered
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded bg-white/8 border border-white/10" /> Unanswered
+          <span className="w-2.5 h-2.5 rounded bg-[var(--color-surface-alt)] border border-[var(--color-border-strong)]" /> Unanswered
         </span>
       </div>
     </div>
@@ -1111,15 +1111,15 @@ function SubmitDialog({
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-sm rounded-2xl border border-white/10 bg-ink p-5 shadow-[0_30px_80px_rgba(0,0,0,.6)]"
+        className="w-full max-w-sm rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-bg)] p-5 shadow-[0_30px_80px_rgba(0,0,0,.6)]"
       >
         <div className="flex items-start gap-3 mb-4">
-          <span className="w-9 h-9 rounded-full bg-amber-500/10 text-amber-300 flex items-center justify-center shrink-0">
+          <span className="w-9 h-9 rounded-full bg-[var(--color-accent-secondary)]/10 text-[var(--color-accent-secondary)] flex items-center justify-center shrink-0">
             <AlertTriangle className="w-4 h-4" />
           </span>
           <div>
-            <h3 className="text-sm font-semibold text-cream mb-1">Submit Exam?</h3>
-            <p className="text-xs text-slate-text leading-relaxed">
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">Submit Exam?</h3>
+            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
               You have answered {answeredCount} of {total} questions. Once submitted, this action cannot be undone.
             </p>
           </div>
@@ -1127,13 +1127,13 @@ function SubmitDialog({
         <div className="flex items-center gap-2 justify-end">
           <button
             onClick={onCancel}
-            className="text-xs font-medium px-4 py-2 rounded-full text-slate-text hover:text-cream hover:bg-white/5 transition-colors"
+            className="text-xs font-medium px-4 py-2 rounded-full text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="text-xs font-medium px-4 py-2 rounded-full bg-teal text-ink hover:bg-teal-glow transition-colors"
+            className="text-xs font-medium px-4 py-2 rounded-full bg-[var(--color-accent-primary)] text-white hover:opacity-90 transition-colors"
           >
             Submit Exam
           </button>
@@ -1180,17 +1180,17 @@ function AssessmentPlayer({
   const locked = secondsLeft <= 0;
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink flex flex-col">
-      <div className="border-b border-white/8 px-4 sm:px-6 py-4 flex items-center justify-between gap-3 shrink-0">
+    <div className="fixed inset-0 z-50 bg-[var(--color-bg)] flex flex-col">
+      <div className="border-b border-[var(--color-border-hairline)] px-4 sm:px-6 py-4 flex items-center justify-between gap-3 shrink-0">
         <div className="min-w-0">
-          <div className="text-xs text-slate-text truncate">{item.courseName}</div>
-          <div className="text-sm font-medium text-cream truncate">{item.title}</div>
+          <div className="text-xs text-[var(--color-text-secondary)] truncate">{item.courseName}</div>
+          <div className="text-sm font-medium text-[var(--color-text-primary)] truncate">{item.title}</div>
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <Timer seconds={secondsLeft} />
           <button
             onClick={onExit}
-            className="hidden sm:inline-flex items-center gap-1 text-xs text-slate-text hover:text-cream transition-colors"
+            className="hidden sm:inline-flex items-center gap-1 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
             <X className="w-3.5 h-3.5" />
             Exit
@@ -1198,19 +1198,19 @@ function AssessmentPlayer({
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 py-3 border-b border-white/8 flex items-center justify-between shrink-0">
-        <span className="text-xs text-slate-text">
+      <div className="px-4 sm:px-6 py-3 border-b border-[var(--color-border-hairline)] flex items-center justify-between shrink-0">
+        <span className="text-xs text-[var(--color-text-secondary)]">
           Progress · {current + 1} / {total} Questions
         </span>
         <button
           onClick={() => setNavOpen(true)}
-          className="lg:hidden text-xs text-teal font-medium"
+          className="lg:hidden text-xs text-[var(--color-accent-primary)] font-medium"
         >
           Navigator
         </button>
       </div>
-      <div className="h-1 bg-white/5 shrink-0">
-        <div className="h-full bg-teal transition-all" style={{ width: `${((current + 1) / total) * 100}%` }} />
+      <div className="h-1 bg-[var(--color-surface-alt)] shrink-0">
+        <div className="h-full bg-[var(--color-accent-primary)] transition-all" style={{ width: `${((current + 1) / total) * 100}%` }} />
       </div>
 
       <div className="flex-1 overflow-y-auto flex">
@@ -1224,24 +1224,24 @@ function AssessmentPlayer({
           />
         </div>
 
-        <div className="hidden lg:block w-72 shrink-0 border-l border-white/8 p-5 overflow-y-auto">
-          <div className="text-xs font-medium text-cream mb-3">Question Navigator</div>
+        <div className="hidden lg:block w-72 shrink-0 border-l border-[var(--color-border-hairline)] p-5 overflow-y-auto">
+          <div className="text-xs font-medium text-[var(--color-text-primary)] mb-3">Question Navigator</div>
           <QuestionNavigator total={total} current={current} answers={answers} onJump={setCurrent} />
           <button
             onClick={() => setShowSubmit(true)}
             disabled={locked}
-            className="w-full mt-6 text-sm font-medium px-4 py-2.5 rounded-full bg-teal text-ink hover:bg-teal-glow transition-colors disabled:opacity-50"
+            className="w-full mt-6 text-sm font-medium px-4 py-2.5 rounded-full bg-[var(--color-accent-primary)] text-white hover:opacity-90 transition-colors disabled:opacity-50"
           >
             Submit Exam
           </button>
         </div>
       </div>
 
-      <div className="border-t border-white/8 px-4 sm:px-6 py-3 flex items-center justify-between shrink-0">
+      <div className="border-t border-[var(--color-border-hairline)] px-4 sm:px-6 py-3 flex items-center justify-between shrink-0">
         <button
           onClick={() => setCurrent((c) => Math.max(0, c - 1))}
           disabled={current === 0}
-          className="inline-flex items-center gap-1.5 text-sm text-slate-text hover:text-cream disabled:opacity-30 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] disabled:opacity-30 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Previous
@@ -1251,14 +1251,14 @@ function AssessmentPlayer({
           <button
             onClick={() => setShowSubmit(true)}
             disabled={locked}
-            className="lg:hidden text-sm font-medium px-5 py-2 rounded-full bg-teal text-ink hover:bg-teal-glow transition-colors disabled:opacity-50"
+            className="lg:hidden text-sm font-medium px-5 py-2 rounded-full bg-[var(--color-accent-primary)] text-white hover:opacity-90 transition-colors disabled:opacity-50"
           >
             Submit
           </button>
         ) : (
           <button
             onClick={() => setCurrent((c) => Math.min(total - 1, c + 1))}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-text hover:text-cream transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
             Next
             <ArrowRight className="w-4 h-4" />
@@ -1281,11 +1281,11 @@ function AssessmentPlayer({
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 z-[56] bg-ink border-t border-white/10 rounded-t-2xl p-5 lg:hidden max-h-[70vh] overflow-y-auto"
+              className="fixed bottom-0 left-0 right-0 z-[56] bg-[var(--color-bg)] border-t border-[var(--color-border-strong)] rounded-t-2xl p-5 lg:hidden max-h-[70vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="text-sm font-medium text-cream">Question Navigator</div>
-                <button onClick={() => setNavOpen(false)} className="text-slate-text hover:text-cream">
+                <div className="text-sm font-medium text-[var(--color-text-primary)]">Question Navigator</div>
+                <button onClick={() => setNavOpen(false)} className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -1304,7 +1304,7 @@ function AssessmentPlayer({
                   setShowSubmit(true);
                 }}
                 disabled={locked}
-                className="w-full mt-6 text-sm font-medium px-4 py-2.5 rounded-full bg-teal text-ink hover:bg-teal-glow transition-colors disabled:opacity-50"
+                className="w-full mt-6 text-sm font-medium px-4 py-2.5 rounded-full bg-[var(--color-accent-primary)] text-white hover:opacity-90 transition-colors disabled:opacity-50"
               >
                 Submit Exam
               </button>
@@ -1347,42 +1347,42 @@ function ResultScreen({
   const passed = percent >= (item.passingMarks / item.totalMarks) * 100;
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-[var(--color-bg)] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8 text-center"
+        className="w-full max-w-md rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6 sm:p-8 text-center"
       >
         <span
           className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 ${
-            passed ? "bg-teal/10 text-teal" : "bg-red-500/10 text-red-400"
+            passed ? "bg-[var(--color-accent-primary)]/10 text-[var(--color-accent-primary)]" : "bg-[var(--color-accent-danger)]/10 text-[var(--color-accent-danger)]"
           }`}
         >
           {passed ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
         </span>
-        <div className="text-xs text-slate-text mb-1">{item.type === "exam" ? "Exam Completed" : "Quiz Completed"}</div>
-        <h2 className="text-lg font-display font-semibold text-cream mb-0.5">{item.title}</h2>
-        <div className="text-xs text-slate-text mb-6">{item.courseName}</div>
+        <div className="text-xs text-[var(--color-text-secondary)] mb-1">{item.type === "exam" ? "Exam Completed" : "Quiz Completed"}</div>
+        <h2 className="text-lg font-display font-semibold text-[var(--color-text-primary)] mb-0.5">{item.title}</h2>
+        <div className="text-xs text-[var(--color-text-secondary)] mb-6">{item.courseName}</div>
 
-        <div className="text-4xl font-display font-semibold text-cream mb-1">
+        <div className="text-4xl font-display font-semibold text-[var(--color-text-primary)] mb-1">
           {correct} / {total}
         </div>
-        <div className="text-teal text-sm font-medium mb-6">{percent}%</div>
+        <div className="text-[var(--color-accent-primary)] text-sm font-medium mb-6">{percent}%</div>
 
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="rounded-xl border border-white/8 p-3">
-            <div className="text-[10px] text-slate-text mb-1">Status</div>
-            <div className={`text-sm font-medium ${passed ? "text-teal" : "text-red-400"}`}>
+          <div className="rounded-xl border border-[var(--color-border-hairline)] p-3">
+            <div className="text-[10px] text-[var(--color-text-secondary)] mb-1">Status</div>
+            <div className={`text-sm font-medium ${passed ? "text-[var(--color-accent-primary)]" : "text-[var(--color-accent-danger)]"}`}>
               {passed ? "Passed" : "Failed"}
             </div>
           </div>
-          <div className="rounded-xl border border-white/8 p-3">
-            <div className="text-[10px] text-slate-text mb-1">Correct</div>
-            <div className="text-sm font-medium text-cream">{correct}</div>
+          <div className="rounded-xl border border-[var(--color-border-hairline)] p-3">
+            <div className="text-[10px] text-[var(--color-text-secondary)] mb-1">Correct</div>
+            <div className="text-sm font-medium text-[var(--color-text-primary)]">{correct}</div>
           </div>
-          <div className="rounded-xl border border-white/8 p-3">
-            <div className="text-[10px] text-slate-text mb-1">Incorrect</div>
-            <div className="text-sm font-medium text-cream">{incorrect}</div>
+          <div className="rounded-xl border border-[var(--color-border-hairline)] p-3">
+            <div className="text-[10px] text-[var(--color-text-secondary)] mb-1">Incorrect</div>
+            <div className="text-sm font-medium text-[var(--color-text-primary)]">{incorrect}</div>
           </div>
         </div>
 
@@ -1390,13 +1390,13 @@ function ResultScreen({
           <button
             onClick={onReview}
             disabled={!item.reviewAllowed}
-            className="flex-1 text-sm font-medium px-4 py-2.5 rounded-full bg-white/5 text-cream hover:bg-white/10 transition-colors border border-white/10 disabled:opacity-40"
+            className="flex-1 text-sm font-medium px-4 py-2.5 rounded-full bg-[var(--color-surface-alt)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)] transition-colors border border-[var(--color-border-strong)] disabled:opacity-40"
           >
             Review Answers
           </button>
           <button
             onClick={onBack}
-            className="flex-1 text-sm font-medium px-4 py-2.5 rounded-full bg-teal text-ink hover:bg-teal-glow transition-colors"
+            className="flex-1 text-sm font-medium px-4 py-2.5 rounded-full bg-[var(--color-accent-primary)] text-white hover:opacity-90 transition-colors"
           >
             {item.type === "exam" ? "Back to Exams" : "Back to Quizzes"}
           </button>
@@ -1417,10 +1417,10 @@ function ReviewAnswers({
 }) {
   if (!item.reviewAllowed) {
     return (
-      <div className="fixed inset-0 z-50 bg-ink flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 bg-[var(--color-bg)] flex items-center justify-center p-4">
         <div className="text-center max-w-sm">
-          <p className="text-sm text-slate-text mb-4">Answer review is not available for this assessment.</p>
-          <button onClick={onClose} className="text-sm font-medium px-4 py-2 rounded-full bg-teal text-ink">
+          <p className="text-sm text-[var(--color-text-secondary)] mb-4">Answer review is not available for this assessment.</p>
+          <button onClick={onClose} className="text-sm font-medium px-4 py-2 rounded-full bg-[var(--color-accent-primary)] text-white">
             Close
           </button>
         </div>
@@ -1429,13 +1429,13 @@ function ReviewAnswers({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink overflow-y-auto">
-      <div className="sticky top-0 bg-ink border-b border-white/8 px-4 sm:px-6 py-4 flex items-center justify-between z-10">
+    <div className="fixed inset-0 z-50 bg-[var(--color-bg)] overflow-y-auto">
+      <div className="sticky top-0 bg-[var(--color-bg)] border-b border-[var(--color-border-hairline)] px-4 sm:px-6 py-4 flex items-center justify-between z-10">
         <div>
-          <div className="text-xs text-slate-text">{item.courseName}</div>
-          <div className="text-sm font-medium text-cream">{item.title} · Review</div>
+          <div className="text-xs text-[var(--color-text-secondary)]">{item.courseName}</div>
+          <div className="text-sm font-medium text-[var(--color-text-primary)]">{item.title} · Review</div>
         </div>
-        <button onClick={onClose} className="text-slate-text hover:text-cream transition-colors">
+        <button onClick={onClose} className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors">
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -1445,24 +1445,24 @@ function ReviewAnswers({
           const yourAnswer = answers[i];
           const correct = yourAnswer === q.correctAnswer;
           return (
-            <div key={q.id} className="rounded-2xl border border-white/8 p-5">
-              <div className="text-xs text-slate-text mb-1.5">Question {i + 1}</div>
-              <div className="text-sm text-cream mb-4">{q.prompt}</div>
+            <div key={q.id} className="rounded-2xl border border-[var(--color-border-hairline)] p-5">
+              <div className="text-xs text-[var(--color-text-secondary)] mb-1.5">Question {i + 1}</div>
+              <div className="text-sm text-[var(--color-text-primary)] mb-4">{q.prompt}</div>
               <div className="grid sm:grid-cols-2 gap-3 mb-3">
-                <div className="rounded-xl border border-white/8 p-3">
-                  <div className="text-[10px] text-slate-text mb-1">Your Answer</div>
-                  <div className="text-sm text-cream">{yourAnswer ?? "Not answered"}</div>
+                <div className="rounded-xl border border-[var(--color-border-hairline)] p-3">
+                  <div className="text-[10px] text-[var(--color-text-secondary)] mb-1">Your Answer</div>
+                  <div className="text-sm text-[var(--color-text-primary)]">{yourAnswer ?? "Not answered"}</div>
                 </div>
-                <div className="rounded-xl border border-white/8 p-3">
-                  <div className="text-[10px] text-slate-text mb-1">Correct Answer</div>
-                  <div className="text-sm text-cream">{q.correctAnswer}</div>
+                <div className="rounded-xl border border-[var(--color-border-hairline)] p-3">
+                  <div className="text-[10px] text-[var(--color-text-secondary)] mb-1">Correct Answer</div>
+                  <div className="text-sm text-[var(--color-text-primary)]">{q.correctAnswer}</div>
                 </div>
               </div>
-              <div className={`inline-flex items-center gap-1.5 text-xs font-medium ${correct ? "text-teal" : "text-red-400"}`}>
+              <div className={`inline-flex items-center gap-1.5 text-xs font-medium ${correct ? "text-[var(--color-accent-primary)]" : "text-[var(--color-accent-danger)]"}`}>
                 {correct ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
                 {correct ? "Correct" : "Incorrect"}
               </div>
-              {q.explanation && <p className="text-xs text-slate-text mt-2 leading-relaxed">{q.explanation}</p>}
+              {q.explanation && <p className="text-xs text-[var(--color-text-secondary)] mt-2 leading-relaxed">{q.explanation}</p>}
             </div>
           );
         })}
@@ -1547,8 +1547,8 @@ function ExamSection({
   return (
     <div>
       <div className="mb-5">
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-cream">Exams</h1>
-        <p className="text-sm text-slate-text mt-1">View your upcoming, ongoing and completed exams.</p>
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-[var(--color-text-primary)]">Exams</h1>
+        <p className="text-sm text-[var(--color-text-secondary)] mt-1">View your upcoming, ongoing and completed exams.</p>
       </div>
 
       <div className="flex items-center gap-1.5 mb-5 overflow-x-auto pb-1">
@@ -1558,8 +1558,8 @@ function ExamSection({
             onClick={() => setSubTab(t.value)}
             className={`shrink-0 text-xs font-medium px-3.5 py-1.5 rounded-full border transition-colors ${
               subTab === t.value
-                ? "bg-white/10 text-cream border-white/20"
-                : "text-slate-text border-white/10 hover:text-cream hover:border-white/20"
+                ? "bg-[var(--color-surface-alt)] text-[var(--color-text-primary)] border-[var(--color-border-strong)]"
+                : "text-[var(--color-text-secondary)] border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-strong)]"
             }`}
           >
             {t.label}
@@ -1689,8 +1689,8 @@ function QuizSection({
   return (
     <div>
       <div className="mb-5">
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-cream">Quizzes</h1>
-        <p className="text-sm text-slate-text mt-1">Practice, test your knowledge and improve your understanding.</p>
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-[var(--color-text-primary)]">Quizzes</h1>
+        <p className="text-sm text-[var(--color-text-secondary)] mt-1">Practice, test your knowledge and improve your understanding.</p>
       </div>
 
       <div className="flex items-center gap-1.5 mb-5 overflow-x-auto pb-1">
@@ -1700,8 +1700,8 @@ function QuizSection({
             onClick={() => setSubTab(t.value)}
             className={`shrink-0 text-xs font-medium px-3.5 py-1.5 rounded-full border transition-colors ${
               subTab === t.value
-                ? "bg-white/10 text-cream border-white/20"
-                : "text-slate-text border-white/10 hover:text-cream hover:border-white/20"
+                ? "bg-[var(--color-surface-alt)] text-[var(--color-text-primary)] border-[var(--color-border-strong)]"
+                : "text-[var(--color-text-secondary)] border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-strong)]"
             }`}
           >
             {t.label}
@@ -1798,14 +1798,14 @@ export default function ExamsAndQuizzes() {
       transition={{ duration: 0.35, ease: "easeOut" }}
       className="max-w-7xl mx-auto"
     >
-      <div className="flex items-center gap-1 border border-white/10 rounded-full p-1 w-fit mb-6">
+      <div className="flex items-center gap-1 border border-[var(--color-border-strong)] rounded-full p-1 w-fit mb-6">
         <button
           onClick={() => {
             setMainTab("exams");
             setSelected(null);
           }}
           className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
-            mainTab === "exams" ? "bg-teal text-ink" : "text-slate-text hover:text-cream"
+            mainTab === "exams" ? "bg-[var(--color-accent-primary)] text-white" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
           }`}
         >
           Exams
@@ -1816,7 +1816,7 @@ export default function ExamsAndQuizzes() {
             setSelected(null);
           }}
           className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
-            mainTab === "quizzes" ? "bg-teal text-ink" : "text-slate-text hover:text-cream"
+            mainTab === "quizzes" ? "bg-[var(--color-accent-primary)] text-white" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
           }`}
         >
           Quizzes
