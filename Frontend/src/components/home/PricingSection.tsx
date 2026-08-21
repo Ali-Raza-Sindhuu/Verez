@@ -64,7 +64,7 @@ function PricingCard({ plan, delay = 0 }: { plan: Plan; delay?: number }) {
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
         whileHover={{ y: -6 }}
-        className="relative flex flex-col rounded-3xl bg-gradient-to-b from-[#4C6FFF] to-[#3d5eef] p-6 text-white shadow-xl shadow-[#4C6FFF]/25 sm:-translate-y-4"
+        className="relative flex flex-col rounded-3xl bg-gradient-to-b from-[#3D6DF2] to-[#3d5eef] p-6 text-white shadow-xl shadow-[#3D6DF2]/25 sm:-translate-y-4"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0, rotate: -20 }}
@@ -121,7 +121,7 @@ function PricingCard({ plan, delay = 0 }: { plan: Plan; delay?: number }) {
         <span className="text-[13px] text-black/40">/mo</span>
       </div>
 
-      <Button className="mt-9 w-full rounded-xl bg-[#4C6FFF] py-5 text-[13.5px] font-semibold text-white hover:bg-[#3d5eef]">
+      <Button className="mt-9 w-full rounded-xl bg-[#3D6DF2] py-5 text-[13.5px] font-semibold text-white hover:bg-[#3d5eef]">
         Get started
       </Button>
 
@@ -142,8 +142,8 @@ function PricingCard({ plan, delay = 0 }: { plan: Plan; delay?: number }) {
 
 export function PricingSection() {
   return (
-    <section className="bg-[#F6F4EF] px-6 pb-28 pt-4">
-      <div className="mx-auto max-w-5xl text-center">
+    <section className="bg-[#F6F4EF] px-6 py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl text-center">
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
           <Badge
             variant="outline"

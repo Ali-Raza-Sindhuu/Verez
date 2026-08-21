@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { VexezMark } from "@/components/common/Logo";
 
 const NAV_LINKS = ["Features", "Solutions", "Resources", "Pricing"];
 
@@ -18,16 +19,8 @@ export function Navbar() {
       {/* 3-column grid keeps nav links visually centered regardless of side widths */}
       <div className="mx-auto grid max-w-6xl grid-cols-2 items-center md:grid-cols-[1fr_auto_1fr]">
         {/* logo */}
-        <Link to="/" className="flex items-center gap-2 justify-self-start">
-          <div className="grid grid-cols-2 gap-[3px]">
-            <span className="h-[6px] w-[6px] rounded-full bg-[#2FA8E8]" />
-            <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
-            <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
-            <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
-          </div>
-          <span className="text-[15px] font-semibold tracking-tight text-[#14151A]">
-            Vexez
-          </span>
+        <Link to="/" className="justify-self-start">
+          <VexezMark />
         </Link>
 
         {/* centered nav links */}

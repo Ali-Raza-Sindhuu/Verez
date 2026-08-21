@@ -35,8 +35,8 @@ function FeatureCard({
 
 export function FeaturesSection() {
   return (
-    <section className="mt-24 bg-[#F1EEE6] px-6 py-20">
-      <div className="mx-auto max-w-5xl text-center">
+    <section className="bg-[#F1EEE6] px-6 py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl text-center">
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
           <Badge
             variant="outline"
@@ -66,8 +66,8 @@ export function FeaturesSection() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.15 * i }}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-[#4C6FFF] text-[12px] font-medium text-white"
-                  style={{ background: ["#4C6FFF", "#E8A33D", "#3E7C59", "#B15CDE"][i] }}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-[#3D6DF2] text-[12px] font-medium text-white"
+                  style={{ background: ["#3D6DF2", "#E8A33D", "#3E7C59", "#B15CDE"][i] }}
                 >
                   {l}
                 </motion.div>
@@ -88,7 +88,7 @@ export function FeaturesSection() {
                   whileInView={{ height: h }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 * i, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="w-6 rounded-md bg-[#4C6FFF]/70"
+                  className="w-6 rounded-md bg-[#3D6DF2]/70"
                 />
               ))}
             </div>
@@ -108,7 +108,7 @@ export function FeaturesSection() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 * i, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   style={{ transformOrigin: "left", width: `${w}%` }}
-                  className="h-2.5 rounded-full bg-gradient-to-r from-[#4C6FFF] to-[#8FD3FF]"
+                  className="h-2.5 rounded-full bg-gradient-to-r from-[#3D6DF2] to-[#8FD3FF]"
                 />
               ))}
             </div>

@@ -42,7 +42,7 @@ function Sidebar() {
     >
       <div className="mb-5 flex items-center gap-2 px-1.5">
         <div className="grid grid-cols-2 gap-[2px]">
-          <span className="h-[5px] w-[5px] rounded-full bg-[#2FA8E8]" />
+          <span className="h-[5px] w-[5px] rounded-full bg-[#3D6DF2]" />
           <span className="h-[5px] w-[5px] rounded-full bg-[#14151A]" />
           <span className="h-[5px] w-[5px] rounded-full bg-[#14151A]" />
           <span className="h-[5px] w-[5px] rounded-full bg-[#14151A]" />

@@ -19,7 +19,7 @@ const TESTIMONIALS: Testimonial[] = [
     name: "John D.",
     role: "Marketing Lead",
     initials: "JD",
-    avatarColor: "#4C6FFF",
+    avatarColor: "#3D6DF2",
   },
   {
     quote:
@@ -126,8 +126,8 @@ function VideoTestimonialCard() {
 
 export function TestimonialsSection() {
   return (
-    <section className="bg-[#F6F4EF] px-6 pb-24 pt-16">
-      <div className="mx-auto max-w-5xl">
+    <section className="bg-[#F6F4EF] px-6 py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
             <Badge

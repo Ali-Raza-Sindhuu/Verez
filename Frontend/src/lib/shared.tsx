@@ -4,7 +4,7 @@ import { motion, useMotionValue, animate, delay } from "framer-motion";
 /**
  * VEXEZ — shared design tokens & helpers
  * Palette: ink (#14151A), porcelain (#F6F4EF), signal amber (#E8A33D),
- * ledger green (#3E7C59), wire blue (#4C6FFF)
+ * ledger green (#3E7C59), wire blue (#3D6DF2)
  * Import { fadeUp, useCountUp, LedgerRing, useLiveTimer } from "./lib/shared"
  * in any section file that needs them.
  */

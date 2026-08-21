@@ -27,7 +27,7 @@ function CornerDot({ className }: { className: string }) {
 
 export function ChallengeStrip() {
   return (
-    <section className="mx-auto max-w-4xl px-6 pt-14 text-center">
+    <section className="mx-auto max-w-4xl px-6 pt-14 pb-16 text-center">
       <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
         <span className="mb-4 inline-block rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-medium text-black/50 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
           Solutions

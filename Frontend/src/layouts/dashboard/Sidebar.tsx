@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronsLeft } from "lucide-react";
 import { NavItemLink } from "./NavItemLink";
 import { CollapsibleNavSection } from "./CollapsableNavSection";
-import { SemesterDropdown } from "./SemesteDropdown";
+import { SemesterDropdown } from "./SemesterDropdown";
 import { ProfileMenu } from "./ProfileMenu";
 import { sections, bottomNav, semesters, cx } from "./navConfig";
 

@@ -17,26 +17,26 @@ import { Badge } from "@/components/ui/badge";
 import { fadeUp } from "../../lib/shared";
 
 const INTEGRATIONS: { label: string; icon: React.ElementType; bg: string; fg: string }[] = [
-  { label: "Drive", icon: Cloud, bg: "#EAF2FF", fg: "#4C6FFF" },
+  { label: "Drive", icon: Cloud, bg: "#EAF2FF", fg: "#3D6DF2" },
   { label: "Creative", icon: Sparkles, bg: "#FBEAFF", fg: "#C24CD6" },
-  { label: "Track", icon: Waypoints, bg: "#EAF2FF", fg: "#2F6FED" },
+  { label: "Track", icon: Waypoints, bg: "#EAF2FF", fg: "#3D6DF2" },
   { label: "Mail", icon: Mail, bg: "#FEF1EA", fg: "#E8552F" },
   { label: "Figma", icon: PenTool, bg: "#FBEAFF", fg: "#C24CD6" },
-  { label: "Outlook", icon: Mail, bg: "#EAF2FF", fg: "#2F6FED" },
+  { label: "Outlook", icon: Mail, bg: "#EAF2FF", fg: "#3D6DF2" },
   { label: "Slack", icon: Layers, bg: "#F1EEFC", fg: "#7C5CFF" },
   { label: "Studio", icon: Mountain, bg: "#F1EEFC", fg: "#6B4CE8" },
-  { label: "Cloud CRM", icon: Cloud, bg: "#EAF2FF", fg: "#2F6FED" },
+  { label: "Cloud CRM", icon: Cloud, bg: "#EAF2FF", fg: "#3D6DF2" },
   { label: "Support", icon: Headphones, bg: "#E9F7EF", fg: "#3E7C59" },
   { label: "Hub", icon: Zap, bg: "#FEF1EA", fg: "#E8552F" },
   { label: "Community", icon: MessageCircle, bg: "#14151A", fg: "#F6F4EF" },
-  { label: "Calendar", icon: Calendar, bg: "#EAF2FF", fg: "#2F6FED" },
+  { label: "Calendar", icon: Calendar, bg: "#EAF2FF", fg: "#3D6DF2" },
   { label: "Hexagon", icon: Hexagon, bg: "#E9F7EF", fg: "#3E7C59" },
 ];
 
 export function IntegrationsSection() {
   return (
-    <section className="relative overflow-hidden bg-[#F6F4EF] px-6 pt-24 pb-8">
-      <div className="mx-auto max-w-5xl text-center">
+    <section className="relative overflow-hidden bg-[#F6F4EF] px-6 py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl text-center">
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
           <Badge
             variant="outline"
@@ -61,7 +61,7 @@ export function IntegrationsSection() {
             className="relative z-10 mx-auto mb-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-lg"
           >
             <div className="grid grid-cols-2 gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#4C6FFF]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#3D6DF2]" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#14151A]" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#14151A]" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#14151A]" />

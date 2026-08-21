@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { VexezMark } from "@/components/common/Logo";
 import {
   MessageCircle,
   Flag,
@@ -114,16 +115,8 @@ export function Footer() {
           className="flex flex-col justify-between gap-8 sm:flex-row sm:items-start"
         >
           <div>
-            <div className="mb-4 flex items-center gap-2">
-              <div className="grid grid-cols-2 gap-[3px]">
-                <span className="h-[6px] w-[6px] rounded-full bg-[#2FA8E8]" />
-                <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
-                <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
-                <span className="h-[6px] w-[6px] rounded-full bg-[#14151A]" />
-              </div>
-              <span className="text-[15px] font-semibold tracking-tight text-[#14151A]">
-                Vexez
-              </span>
+            <div className="mb-4">
+              <VexezMark />
             </div>
             <h3 className="max-w-xs text-[26px] font-semibold leading-[1.2] tracking-tight text-[#14151A] sm:text-[30px]">
               Stay organized and boost your productivity

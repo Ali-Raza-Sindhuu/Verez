@@ -195,7 +195,7 @@ function IntegrationsCard() {
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#FAF9F6]">
+    <section className="relative overflow-hidden bg-[#FBFAF7]">
       <div
         className="absolute inset-0"
         style={{
@@ -218,7 +218,7 @@ export function Hero() {
           className="mx-auto mb-7 flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-white shadow-[0_8px_20px_rgba(0,0,0,0.08)]"
         >
           <div className="grid grid-cols-2 gap-[5px]">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#2FA8E8]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#3D6DF2]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#14151A]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#14151A]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#14151A]" />
